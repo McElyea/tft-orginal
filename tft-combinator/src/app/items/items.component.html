@@ -1,0 +1,11 @@
+<h2>Set 2 Available Items</h2>
+
+<ul class="items">
+    <li *ngFor="let item of items" 
+        [class.selected]="item === selectedItem" 
+        (click)="onSelect(item)">
+        <span class="badge">{{item.id}}</span> {{item.name}}
+    </li>
+</ul>
+
+<app-items-collected [item]="selectedItem"></app-items-collected>
