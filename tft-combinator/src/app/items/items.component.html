@@ -3,7 +3,7 @@
 <ul class="items">
     <li *ngFor="let item of items" >
         <a routerLink="/detail/{{item.id}}">
-            <span class="badge">{{item.id}}</span> {{item.name}}
+            <img src="../../assets/img/{{item.name.replace(' ','').replace(' ','').replace(' ','').replace(' ','').replace('\'','').replace('\.','').replace('\.','')}}.png">
         </a>
     </li>
 </ul>

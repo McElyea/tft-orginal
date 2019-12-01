@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 
 import { Observable, of } from 'rxjs';
 
-import { Item } from './item';
-import { ITEMS } from './mock-items';
-import { MessageService } from './message.service';
+import { Item } from './item'; 
+import { MessageService } from './message.service'; 
+import ITEMS  from '../assets/json/items.json';
 
 @Injectable({
   providedIn: 'root',
@@ -13,15 +13,14 @@ export class ItemService {
 
   constructor(private messageService: MessageService) { }
 
-  getItems(): Observable<Item[]> {
-    // TODO: send the message _after_ fetching the items
-    this.messageService.add('ItemService: fetched items');
+  getItems(): Observable<Item[]> { 
+    this.messageService.add('ItemService: fetched items'); 
+
     return of(ITEMS);
   }
 
-  getItem(id: number): Observable<Item> {
-    // TODO: send the message _after_ fetching the item
-    this.messageService.add(`ItemService: fetched item id=${id}`);
+  getItem(id: number): Observable<Item> { 
+    this.messageService.add(`ItemService: fetched item id=${id}`); 
     return of(ITEMS.find(item => item.id === id));
   }
 }
