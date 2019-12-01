@@ -9,24 +9,16 @@ import { ItemService } from '../item.service';
   styleUrls: ['./items.component.css']
 })
 export class ItemsComponent implements OnInit {
-
-  selectedItem: Item;
-
-  items: Item[];
-  yourItems: Item[] = [];  
-
-  constructor(private itemService: ItemService) { }
+ 
+  items: Item[]; 
+ 
+  constructor(private itemService: ItemService) { }   
 
   ngOnInit() {
     this.getItems();
   }
-
-  onSelect(item: Item): void {
-    this.selectedItem = item;
-    this.yourItems.push(item);
-  }
-
-   getItems(): void {
+ 
+   getItems(): void { 
     this.itemService.getItems()
         .subscribe(items => this.items = items);
   }

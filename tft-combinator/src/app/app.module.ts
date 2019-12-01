@@ -7,15 +7,18 @@ import { FormsModule } from '@angular/forms';
 import { ItemsComponent } from './items/items.component';
 import { ItemsCollectedComponent } from './items-collected/items-collected.component';
 import { MessagesComponent } from './messages/messages.component';
-
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { HttpClientModule }    from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
     ItemsComponent,
     ItemsCollectedComponent,
-    MessagesComponent
+    MessagesComponent,
+    DashboardComponent
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     FormsModule,
     AppRoutingModule
