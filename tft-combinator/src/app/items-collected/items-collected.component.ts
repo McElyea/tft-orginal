@@ -12,6 +12,8 @@ import { ItemService }  from '../item.service';
 export class ItemsCollectedComponent implements OnInit {
   @Input() item: Item;
   
+  collectedItems: Item[] = [];
+  
   constructor(
     private route: ActivatedRoute,
     private itemService: ItemService,
@@ -29,4 +31,13 @@ export class ItemsCollectedComponent implements OnInit {
     this.itemService.getItem(id)
       .subscribe(item => this.item = item);
   } 
+
+  onSelect(item: Item): void {
+    console.log(item);
+    console.log(item.name);
+    console.log(item.id);
+    this.collectedItems.splice(item.id);
+    console.log(item.name);
+  }
+
 } 

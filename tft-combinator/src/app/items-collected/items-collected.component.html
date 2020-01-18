@@ -1,11 +1,2 @@
-<div *ngIf="item"> 
+<h3>Collected Items</h3>
 
-  <h2>{{item.name | uppercase}} Details</h2>
-  <div><span>id: </span>{{item.id}}</div>
-  <div>
-    <label>name:
-      <input [(ngModel)]="item.name" placeholder="name"/>
-    </label>
-  </div>
-  <button (click)="goBack()">go back</button>
-</div>

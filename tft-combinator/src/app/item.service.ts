@@ -13,10 +13,10 @@ export class ItemService {
 
   constructor(private messageService: MessageService) { }
 
-  getItems(): Observable<Item[]> { 
+  getItems(): Item[] { 
     this.messageService.add('ItemService: fetched items'); 
 
-    return of(ITEMS);
+    return ITEMS;
   }
 
   getItem(id: number): Observable<Item> { 

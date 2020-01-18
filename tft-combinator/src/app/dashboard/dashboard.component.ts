@@ -8,7 +8,8 @@ import { ItemService } from '../item.service';
   styleUrls: [ './dashboard.component.css' ]
 })
 export class DashboardComponent implements OnInit {
-  items: Item[] = [];
+  basicItems: Item[] = [];
+  collectedItems: Item[] = [];
 
   constructor(private itemService: ItemService) { }
 
@@ -17,7 +18,20 @@ export class DashboardComponent implements OnInit {
   }
 
   getItems(): void {
-    this.itemService.getItems()
-      .subscribe(items => this.items = items.slice(0, 9));
+    let allItems = this.itemService.getItems();
+    for(let i = 1; i<= 9; i++){
+      this.basicItems.push(allItems.find(item => item.id === i));
+    }      
+      
   }
+
+  onSelect(item: Item): void { 
+      this.collectedItems.push(item);  
+  }
+
+  removeCollectedItem(item: Item): void {
+    let index = this.collectedItems.indexOf(item);
+    this.collectedItems.splice(index,1); 
+  }
+
 }

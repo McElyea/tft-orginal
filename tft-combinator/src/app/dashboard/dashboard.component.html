@@ -1,10 +1,45 @@
+
 <h3>Basic Items</h3>
-<div class="grid grid-pad">
-  <a *ngFor="let item of items" class="col-1" 
-  routerLink="/detail/{{item.id}}">
-    <div class="module item">      
-      <h4>{{item.name.replace(' ','').replace(' ','').replace(' ','').replace('\'','').replace('\.','').replace('\.','')}}</h4>
-      <img src="../../assets/img/{{item.name.replace(' ','').replace(' ','').replace(' ','').replace('\'','').replace('\.','').replace('\.','')}}.png">
-    </div>
+<div class="grid grid-pad" name=basicItems>
+  <a *ngFor="let item of basicItems" class="col-1" (click)="onSelect(item)"> 
+      <button mat-raised-button
+        matTooltip= "item.name" 
+        aria-label="Button that displays a tooltip when focused or hovered over"
+        class="module item">
+        
+      <img src="../../assets/img/{{item.name.replace(' ','').replace(' ','').replace(' ','').replace('\'','').replace('\.','').replace('\.','')}}.png">    
+      </button>   
+  </a>
+</div>
+
+<mat-divider [inset]="true"></mat-divider>
+<h3>Collected Items</h3>
+<div class="grid grid-pad" name=collectedItems>
+  <a *ngFor="let collectedItem of collectedItems" class="col-1-9" (click)="removeCollectedItem(collectedItem)">
+    
+      <button mat-raised-button
+        matTooltip= "item.name" 
+        aria-label="item.name"        
+        class="module items-collected">
+        
+      <img src="../../assets/img/{{collectedItem.name.replace(' ','').replace(' ','').replace(' ','').replace('\'','').replace('\.','').replace('\.','')}}.png">    
+      </button>   
+
+  </a>
+</div>
+<div></div>
+<mat-divider [inset]="true" [vertical]="true"></mat-divider>
+<h3>Craftable Items</h3>
+<div class="grid grid-pad" name=craftableItems>
+  <a *ngFor="let craftableItem of craftableItems" class="col-1" (click)="addSelected(craftableItems)">
+    
+      <button mat-raised-button
+        matTooltip= "item.name" 
+        aria-label="Button that displays a tooltip when focused or hovered over"
+        class="module items-collected">
+        
+      <img src="../../assets/img/{{collectedItem.name.replace(' ','').replace(' ','').replace(' ','').replace('\'','').replace('\.','').replace('\.','')}}.png">    
+      </button>   
+
   </a>
 </div>
