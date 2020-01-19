@@ -7,7 +7,7 @@
         aria-label="Button that displays a tooltip when focused or hovered over"
         class="module item">
         
-      <img src="../../assets/img/{{item.name.replace(' ','').replace(' ','').replace(' ','').replace('\'','').replace('\.','').replace('\.','')}}.png">    
+      <img src="../../assets/img/{{item.name}}.png">    
       </button>   
   </a>
 </div>
@@ -22,13 +22,15 @@
         aria-label="item.name"        
         class="module items-collected">
         
-      <img src="../../assets/img/{{collectedItem.name.replace(' ','').replace(' ','').replace(' ','').replace('\'','').replace('\.','').replace('\.','')}}.png">    
+      <img src="../../assets/img/{{collectedItem.name}}.png">    
       </button>   
 
   </a>
 </div>
 <div></div>
-<mat-divider [inset]="true" [vertical]="true"></mat-divider>
+<mat-divider [inset]="true" [vertical]="true">
+
+</mat-divider>
 <h3>Craftable Items</h3>
 <div class="grid grid-pad" name=craftableItems>
   <a *ngFor="let craftableItem of craftableItems" class="col-1" (click)="addSelected(craftableItems)">
@@ -38,7 +40,7 @@
         aria-label="Button that displays a tooltip when focused or hovered over"
         class="module items-collected">
         
-      <img src="../../assets/img/{{collectedItem.name.replace(' ','').replace(' ','').replace(' ','').replace('\'','').replace('\.','').replace('\.','')}}.png">    
+      <img src="../../assets/img/{{craftableItem.name}}.png">    
       </button>   
 
   </a>

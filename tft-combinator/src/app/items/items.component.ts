@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { Item } from '../item';
 import { ItemService } from '../item.service';
-
+import { Observable, of } from 'rxjs';
 @Component({
   selector: 'app-items',
   templateUrl: './items.component.html',
@@ -19,8 +19,7 @@ export class ItemsComponent implements OnInit {
   }
  
    getItems(): void { 
-    this.itemService.getItems()
-        .subscribe(items => this.items = items);
+    of(this.itemService.getItems()).subscribe(items => this.items = items);
   }
  
 
