@@ -12,6 +12,7 @@ import { HttpClientModule }    from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
+import {MatButtonModule} from '@angular/material/button';
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,7 +28,8 @@ import { MatListModule } from '@angular/material/list';
     AppRoutingModule,
     NoopAnimationsModule,
     MatDividerModule,
-    MatListModule
+    MatListModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]

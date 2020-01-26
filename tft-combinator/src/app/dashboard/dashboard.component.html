@@ -1,42 +1,64 @@
 
 <h3>Basic Items</h3>
 <div class="grid grid-pad" name=basicItems>
-  <a *ngFor="let item of basicItems" class="col-1" (click)="onSelect(item)"> 
+  <a *ngFor="let item of basicItems" class="col-1-4" (click)="addCollectedItem(item)"> 
       <button mat-raised-button
+        color="primary" 
         matTooltip= "item.name" 
         aria-label="Button that displays a tooltip when focused or hovered over"
         class="module item">
         
       <img src="../../assets/img/{{item.name}}.png">    
       </button>   
-  </a>
-</div>
-
-<mat-divider [inset]="true"></mat-divider>
+  </a> 
+</div> 
+<p>
+<mat-divider [inset]="true"></mat-divider> 
+</p>
 <h3>Collected Items</h3>
 <div class="grid grid-pad" name=collectedItems>
-  <a *ngFor="let collectedItem of collectedItems" class="col-1-9" (click)="removeCollectedItem(collectedItem)">
+  <a *ngFor="let collectedItem of collectedItems" class="col-1-4" (click)="removeCollectedItem(collectedItem)">
     
       <button mat-raised-button
-        matTooltip= "item.name" 
-        aria-label="item.name"        
+        matTooltip= "collectedItem.name" 
+        aria-label="collectedItem.name"        
         class="module items-collected">
         
       <img src="../../assets/img/{{collectedItem.name}}.png">    
-      </button>   
-
+      </button>
   </a>
-</div>
-<div></div>
-<mat-divider [inset]="true" [vertical]="true">
+</div> 
+<p>
+  <mat-divider [inset]="true"></mat-divider> 
 
-</mat-divider>
-<h3>Craftable Items</h3>
-<div class="grid grid-pad" name=craftableItems>
-  <a *ngFor="let craftableItem of craftableItems" class="col-1" (click)="addSelected(craftableItems)">
+</p>
+<h3>Item Combinations</h3>
+<div class="grid grid-pad" name=itemCombinations>
+  <mat-list>
+  <mat-list-item *ngFor="let itemCombination of itemCombinations" class="col-1-4">
     
+      <a *ngFor="let item of itemCombination" class="col-1-4">
       <button mat-raised-button
         matTooltip= "item.name" 
+        aria-label="Button that displays a tooltip when focused or hovered over"
+        class="module items-collected">
+        
+      <img src="../../assets/img/{{craftableItem.name}}.png">    
+      </button>   
+      </a>
+  
+  </mat-list-item>
+  </mat-list>
+</div>
+<p>
+  <mat-divider [inset]="true"></mat-divider> 
+</p>
+<h3>Craftable Items</h3>
+<div class="grid grid-pad" name=craftableItems>
+  <a *ngFor="let craftableItem of craftableItems" class="col-1-4" (click)="addSelectedCraftedItem(craftableItem)">
+    
+      <button mat-raised-button
+        matTooltip= "craftableItem.name" 
         aria-label="Button that displays a tooltip when focused or hovered over"
         class="module items-collected">
         

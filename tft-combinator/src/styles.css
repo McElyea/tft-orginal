@@ -5,7 +5,7 @@ h1 {
     font-size: 250%;
   }
   h2, h3 {
-    color: #444;
+    color: rgb(216, 226, 233);
     font-family: Arial, Helvetica, sans-serif;
     font-weight: lighter;
   }
@@ -13,7 +13,7 @@ h1 {
     margin: 2em;
   }
   body, input[type="text"], button {
-    color: #333;
+    color: rgb(255, 255, 255);
     font-family: Cambria, Georgia;
   }
   /* everywhere else */
@@ -21,4 +21,4 @@ h1 {
     font-family: Arial, Helvetica, sans-serif;
   }
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-color:#4f5f76;}

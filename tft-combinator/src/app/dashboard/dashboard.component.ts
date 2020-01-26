@@ -27,14 +27,23 @@ export class DashboardComponent implements OnInit {
       
   }
 
-  onSelect(item: Item): void { 
+  addCollectedItem(item: Item): void { 
       this.collectedItems.push(item);
       this.updateCraftableItems();  
   }
 
   removeCollectedItem(item: Item): void {
     let index = this.collectedItems.indexOf(item);
+    if(item.id > 9){      
+      let itemFirstDigit = Math.floor(item.id / 10);
+      let itemSecondDigit = item.id % 10;      
+      let newItem1 = this.basicItems[itemFirstDigit-1];
+      let newItem2 = this.basicItems[itemSecondDigit - 1];
+      this.collectedItems.push(newItem1);
+      this.collectedItems.push(newItem2);
+    }
     this.collectedItems.splice(index,1); 
+    this.updateCraftableItems(); 
   }
 
   updateCraftableItems(): void {
@@ -44,30 +53,39 @@ export class DashboardComponent implements OnInit {
     }
     
     this.craftableItems = [];
-    let max: number = collectedItemIds.length;
-    console.log("items counted, max = " + max);
-    if(max >= 2){
+    let max: number = collectedItemIds.length; 
+    if(max >= 2){ 
       for(let i = 0; i < max; i++){
         for(let j = i+1; j < max; j++){
           let firstId = collectedItemIds[i];
           let secondId = collectedItemIds[j];
+          if(firstId > 9 || secondId > 9){
+            continue;
+          }
           if(firstId > secondId)
           {
             let tempId = secondId;
             secondId = firstId;
-            firstId = tempId;
+            firstId = tempId;   
           }
           let newItemId = firstId * 10 + secondId;
-          let newItem = this.allItems.find(item => item.id === newItemId);
-          this.craftableItems.push(newItem);
+          if(!this.craftableItems.find(item => item.id === newItemId)){
+            let newItem = this.allItems.find(item => item.id === newItemId);
+            this.craftableItems.push(newItem);
+          }
         }
       }      
     }
     
   }
 
-
-
-
-
+  addSelectedCraftedItem(item: Item): void {
+    this.collectedItems.push(item);    
+    let itemFirstDigit = Math.floor(item.id / 10);
+    let itemSecondDigit = item.id % 10;      
+    let newItem1 = this.basicItems[itemFirstDigit-1];
+    let newItem2 = this.basicItems[itemSecondDigit - 1];
+    this.removeCollectedItem(newItem1);
+    this.removeCollectedItem(newItem2);
+  }
 }
