@@ -21,6 +21,7 @@
     position: relative;
   }
   .grid {
+    padding-top:20px;
     height: 0;
   }
   .col-1-4 {
@@ -37,13 +38,19 @@
     color: #607d8b;
   }
   .grid-pad {
-    padding: 35px;
+    padding: 10px;
   }
   .grid-pad > [class*='col-']:last-of-type {
     padding-right: 75px;
   }
 
   .mat-list-item{    
-    min-height: 5px;
-    padding-top: 10;
+    min-height: 50px;
+    padding-top: 100px;
   }
+  .mat-divider {
+    display: block;
+    margin: 10px;
+    border-top-width: 20px;
+    border-top-style: solid;
+ }
