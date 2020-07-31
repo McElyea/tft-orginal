@@ -27,7 +27,7 @@ describe('DashboardComponent', () => {
     expect(itemCount).toEqual(9);
   });
 
-  // it('should create', () => {
-  //  expect(component).toBeTruthy();
-  // });
+  it('should create', () => {
+   expect(component).toBeTruthy();
+  });
 });
