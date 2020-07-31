@@ -63,8 +63,10 @@ aria-orientation="horizontal">></mat-divider></span>
     <mat-list-item *ngFor="let itemCombination of itemCombinations" class="col-1-4">
 
       <a *ngFor="let item of itemCombination" class="col-1-4">
-        <button mat-raised-button matTooltip="item.name"
-          aria-label="Button that displays a tooltip when focused or hovered over" class="module items-collected">
+        <button mat-raised-button 
+          matTooltip=item.name
+          aria-label=item.name
+          class="module items-collected">
 
           <img src="../../assets/img/{{item.name}}.png">
         </button>
@@ -72,5 +74,4 @@ aria-orientation="horizontal">></mat-divider></span>
 
     </mat-list-item>
   </mat-list>
-</span> 
- 
+</span>

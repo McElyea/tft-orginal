@@ -92,10 +92,10 @@ export class DashboardComponent implements OnInit {
     return this.allItems.find(item => item.id === itemId);
   }
   updateCombinations(): void {
-    this.itemCombinations = this.updateListCombinations(this.collectedItems);
+    this.itemCombinations = this.updateListCombinations(this.collectedItems, []);
   }
 
-  updateListCombinations(collectedItemsList: Item[]): Item[][] {    
+  updateListCombinations(collectedItemsList: Item[], head: Item[]): Item[][] {    
     if (collectedItemsList.length < 2) {
       return [];
     }
@@ -115,11 +115,11 @@ export class DashboardComponent implements OnInit {
       return [];
     }
 
-    let remainingCombinations: Item[][] = this.getCombinations(collectedBasicItems, this.craftableItems);
+    let remainingCombinations: Item[][] = this.iterateCombinations(collectedBasicItems, this.craftableItems, head);
     for(let i = 0; i < remainingCombinations.length;i++){
       if(remainingCombinations[i].length > 3){
-        let newCombos = this.updateListCombinations(remainingCombinations[i]);
-        let craftedItems = [];
+        let newCombos = this.updateListCombinations(remainingCombinations[i], head);
+        let craftedItems = head;
         for(let j= 0; j< newCombos.length;j++){
           if(newCombos[j].length > 3){
 
@@ -131,10 +131,10 @@ export class DashboardComponent implements OnInit {
       }
     
     }
-    return remainingCombinations;      
+    return remainingCombinations;     
   }
 
-  private getCombinations(collectedBasicItems: number[], craftableItems: Item[]): Item[][] {
+  private iterateCombinations(collectedBasicItems: number[], craftableItems: Item[], head: Item[]): Item[][] {
     let currentCraftableList = cloneArray(craftableItems);
     let currentCraftableListLength = currentCraftableList.length;
     let combinations: Item[][] = [];
@@ -146,35 +146,27 @@ export class DashboardComponent implements OnInit {
       let newItemlist: Item[] = [];
       newItemlist.push(newItem);
       
-      for (let j = 0; j < filteredBasicItemList.length; j++) {
-        let remainingCraftableItems = this.getUniqueCraftableItems(filteredBasicItemList[j]);
-        
+      for (let j = 0; j < filteredBasicItemList.length; j++) {         
         let newBasicItemToBePushed = this.getBasicItemById(filteredBasicItemList[j]);
         newItemlist.push(newBasicItemToBePushed);
+        head.push(newItem);
       }
       combinations.push(newItemlist);
     }
     return combinations;
-  }
-
-
-  removeCraftingItems(collectedBasicItems: number[], itemFirstDigit: number, itemSecondDigit: number) {
+  } 
+ 
+  removeCraftingItems(collectedBasicItems: number[], itemFirstDigit: number, itemSecondDigit: number) { 
     let tempBasicItemList = cloneArray(collectedBasicItems);
     let index1 = tempBasicItemList.indexOf(this.getBasicItemById(itemFirstDigit).id);
     tempBasicItemList.splice(index1, 1);
     let index2 = tempBasicItemList.indexOf(this.getBasicItemById(itemSecondDigit).id);
     tempBasicItemList.splice(index2, 1);
     return tempBasicItemList;
-  }
+  } 
 
-  continueCombinations(): void {
-    let currentCombinationsLength = this.itemCombinations.length;
-    for(let i = 0; i < currentCombinationsLength; i++){
-
-    }
-  }
-
-  getBasicItemById(id: number): Item {
+ 
+  getBasicItemById(id: number): Item { 
     return this.basicItems[id - 1];
   }
 
