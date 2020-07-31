@@ -20,12 +20,12 @@ export class DashboardComponent implements OnInit {
     this.getItems();
   }
 
-  getItems(): void {
+  getItems(): number {
     this.allItems = this.itemService.getItems();
     for (let i = 1; i <= 9; i++) {
       this.basicItems.push(this.allItems.find(item => item.id === i));
     }
-
+    return this.basicItems.length;
   }
 
   addCollectedItem(item: Item): void {

@@ -1,31 +1,21 @@
 import { TestBed, async } from '@angular/core/testing';
-import { AppComponent } from './app.component';
+import { DashboardComponent } from '../../../tft-combinator/src/app/dashboard/dashboard.component';
 
-describe('AppComponent', () => {
+describe('DashboardComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        AppComponent
+        DashboardComponent
       ],
     }).compileComponents();
   }));
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+    const fixture = TestBed.createComponent(DashboardComponent);
     const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
+    let itemCount = app.getItems();
+    expect(app).toEqual(9);
   });
 
-  it(`should have as title 'angular-unit-testing'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('angular-unit-testing');
-  });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('angular-unit-testing app is running!');
-  });
 });
