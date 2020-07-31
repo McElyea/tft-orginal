@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { ItemsComponent } from './items/items.component';
 import { ItemsCollectedComponent } from './items-collected/items-collected.component';
-import { MessagesComponent } from './messages/messages.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HttpClientModule }    from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -19,7 +18,6 @@ import {MatButtonModule} from '@angular/material/button';
     AppComponent,
     ItemsComponent,
     ItemsCollectedComponent,
-    MessagesComponent,
     DashboardComponent
   ],
   imports: [
