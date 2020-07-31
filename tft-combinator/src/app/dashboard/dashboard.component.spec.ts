@@ -19,6 +19,13 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
   });
 
+  it('should load the basicitems with 9 items', () => {
+    const fixture = TestBed.createComponent(DashboardComponent);
+    const app = fixture.debugElement.componentInstance;
+    let itemCount = app.getItems();
+    expect(itemCount).toEqual(9);
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
