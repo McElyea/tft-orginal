@@ -63,7 +63,6 @@ describe('DashboardComponent', () => {
 
   });
 
-
   it('should remove componentItem tear from collected items', () => {
     let componentItem = component.getComponentItemById(4);
     component.addCollectedItem(componentItem);
@@ -87,8 +86,7 @@ describe('DashboardComponent', () => {
     expect(component.collectedItems[0].id).toEqual(16);     
   });
 
-  it('should remove the craftedItem Bloodthirster from collected items and add the component items back to collecteditems', () => {
-    
+  it('should remove the craftedItem Bloodthirster from collected items and add the component items back to collecteditems', () => {    
     let componentItemSword = component.getComponentItemById(1);
     component.addCollectedItem(componentItemSword);
     let componentItemShell = component.getComponentItemById(6);
@@ -105,8 +103,26 @@ describe('DashboardComponent', () => {
     expect(component.collectedItems[0].name).toEqual("B.F. Sword");      
     expect(component.collectedItems[1].id).toEqual(6);      
     expect(component.collectedItems[1].name).toEqual("Negatron Cloak");      
+  });
 
+  it('should have BloodThirster in potential composite items if a sword and shell are int the composite items list', () => {    
+    let componentItemSword = component.getComponentItemById(1);
+    component.addCollectedItem(componentItemSword);
+    let componentItemShell = component.getComponentItemById(6);
+    component.addCollectedItem(componentItemShell);    
+    let compositeItemId = component.getCraftedItemId(6,1);
+    let compositeItem = component.findItemById(compositeItemId);
+    expect(component.potentialCompositeItems[0]).toEqual(compositeItem);
+  });
 
+  it('should not have Guardian Angel in potential composite items if a sword and shell are in the composite item list', () => {
+    let componentItemSword = component.getComponentItemById(1);
+    component.addCollectedItem(componentItemSword);
+    let componentItemShell = component.getComponentItemById(6);
+    component.addCollectedItem(componentItemShell);    
+    let compositeItemId = component.getCraftedItemId(5,1);
+    let compositeItem = component.findItemById(compositeItemId);
+    expect(component.potentialCompositeItems[0]).toEqual(compositeItem);
   });
 
   it('should create', () => {

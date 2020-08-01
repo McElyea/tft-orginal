@@ -123,5 +123,8 @@
       }
     }
   },
-  "defaultProject": "tft-combinator"
+  "defaultProject": "tft-combinator",
+  "cli": {
+    "analytics": false
+  }
 }
