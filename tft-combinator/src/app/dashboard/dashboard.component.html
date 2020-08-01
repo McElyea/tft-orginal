@@ -37,10 +37,10 @@ aria-orientation="horizontal">></mat-divider></span>
 role="separator" 
 aria-orientation="horizontal">></mat-divider></span>
 
-<span class="grid grid-pad" name=craftableItems>
+<span class="grid grid-pad" name=potentialCompositeItems>
   
 <h3>Craftable Items</h3>
-  <a *ngFor="let craftableItem of craftableItems" class="col-1-4" (click)="addCraftedItem(craftableItem)">
+  <a *ngFor="let craftableItem of potentialCompositeItems" class="col-1-4" (click)="addCraftedItem(craftableItem)">
 
     <button mat-raised-button matTooltip="craftableItem.name"
       aria-label="Button that displays a tooltip when focused or hovered over" class="module items-collected">
