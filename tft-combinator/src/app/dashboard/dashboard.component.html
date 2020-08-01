@@ -1,8 +1,8 @@
 
-<span class="grid grid-pad" name=basicItems> 
+<span class="grid grid-pad" name=componentItems> 
   
-<h3>Basic Items</h3> 
-  <a *ngFor="let item of basicItems" class="col-1-4" (click)="addCollectedItem(item)">
+<h3>Component Items</h3> 
+  <a *ngFor="let item of componentItems" class="col-1-4" (click)="addCollectedItem(item)">
     <button mat-raised-button color="primary" matTooltip="item.name"
       aria-label="Button that displays a tooltip when focused or hovered over" class="module item">
 
@@ -57,7 +57,7 @@ aria-orientation="horizontal">></mat-divider></span>
 <mat-divider class="mat-divider mat-divider-horizontal" 
 role="separator" 
 aria-orientation="horizontal">></mat-divider></span>
-<h3>Possible Item Combinations from Unused Basic Items</h3>
+<h3>Possible Item Combinations from Unused Component Items</h3>
 <span class="grid grid-pad" name=itemCombinations>
   <mat-list>
     <mat-list-item *ngFor="let itemCombination of itemCombinations" class="col-1-4">

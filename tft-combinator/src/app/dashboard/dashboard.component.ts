@@ -9,23 +9,27 @@ import { isNullOrUndefined } from 'util';
 })
 export class DashboardComponent implements OnInit {
   allItems: Item[] = [];
-  basicItems: Item[] = [];
+  allComponentItems: Item[] = [];
   collectedItems: Item[] = [];
-  craftableItems: Item[] = [];
+  potentialCompositeItems: Item[] = [];
   itemCombinations: Item[][] = [];
 
   constructor(private itemService: ItemService) { }
 
   ngOnInit() {
-    this.getItems();
+    this.getAllItems();
+    this.getAllComponentItems();
   }
 
-  getItems(): number {
+  getAllItems(): void {
     this.allItems = this.itemService.getItems();
+  }
+  
+  getAllComponentItems(): void {
+    this.allComponentItems = [];
     for (let i = 1; i <= 9; i++) {
-      this.basicItems.push(this.allItems.find(item => item.id === i));
+      this.allComponentItems.push(this.allItems.find(item => item.id === i));
     }
-    return this.basicItems.length;
   }
 
   addCollectedItem(item: Item): void {
@@ -37,8 +41,8 @@ export class DashboardComponent implements OnInit {
     this.collectedItems.push(item);
     let itemFirstDigit = Math.floor(item.id / 10);
     let itemSecondDigit = item.id % 10;
-    let newItem1 = this.getBasicItemById(itemFirstDigit);
-    let newItem2 = this.getBasicItemById(itemSecondDigit);
+    let newItem1 = this.getComponentItemById(itemFirstDigit);
+    let newItem2 = this.getComponentItemById(itemSecondDigit);
     this.removeCollectedItem(newItem1);
     this.removeCollectedItem(newItem2);
   }
@@ -48,8 +52,8 @@ export class DashboardComponent implements OnInit {
     if (item.id > 9) {
       let itemFirstDigit = Math.floor(item.id / 10);
       let itemSecondDigit = item.id % 10;
-      let newItem1 = this.getBasicItemById(itemFirstDigit);
-      let newItem2 = this.getBasicItemById(itemSecondDigit);
+      let newItem1 = this.getComponentItemById(itemFirstDigit);
+      let newItem2 = this.getComponentItemById(itemSecondDigit);
       this.collectedItems.push(newItem1);
       this.collectedItems.push(newItem2);
     }
@@ -59,7 +63,7 @@ export class DashboardComponent implements OnInit {
 
   updateCraftableItems(): void {
 
-    this.craftableItems = this.getUniqueCraftableItems(this.collectedItems);
+    this.potentialCompositeItems = this.getUniqueCraftableItems(this.collectedItems);
     this.updateCombinations();
   }
 
@@ -99,7 +103,7 @@ export class DashboardComponent implements OnInit {
     if (collectedItemsList.length < 2) {
       return [];
     }
-    let collectedBasicItems: number[] = [];
+    let collectedComponentItems: number[] = [];
     let collectedCraftedItems: number[] = [];
     for (let i = 0; i < collectedItemsList.length; i++) {
       let thisItemId = collectedItemsList[i].id;
@@ -107,15 +111,15 @@ export class DashboardComponent implements OnInit {
         collectedCraftedItems.push(thisItemId);
       }
       else {
-        collectedBasicItems.push(thisItemId);
+        collectedComponentItems.push(thisItemId);
       }
     }
 
-    if (collectedBasicItems.length < 2) {
+    if (collectedComponentItems.length < 2) {
       return [];
     }
 
-    let remainingCombinations: Item[][] = this.iterateCombinations(collectedBasicItems, this.craftableItems, head);
+    let remainingCombinations: Item[][] = this.iterateCombinations(collectedComponentItems, this.potentialCompositeItems, head);
     for(let i = 0; i < remainingCombinations.length;i++){
       if(remainingCombinations[i].length > 3){
         let newCombos = this.updateListCombinations(remainingCombinations[i], head);
@@ -134,7 +138,7 @@ export class DashboardComponent implements OnInit {
     return remainingCombinations;     
   }
 
-  private iterateCombinations(collectedBasicItems: number[], craftableItems: Item[], head: Item[]): Item[][] {
+  private iterateCombinations(collectedComponentItems: number[], craftableItems: Item[], head: Item[]): Item[][] {
     let currentCraftableList = cloneArray(craftableItems);
     let currentCraftableListLength = currentCraftableList.length;
     let combinations: Item[][] = [];
@@ -142,13 +146,13 @@ export class DashboardComponent implements OnInit {
       let newItem = currentCraftableList[i];
       let itemFirstDigit = Math.floor(newItem.id / 10);
       let itemSecondDigit = newItem.id % 10;
-      let filteredBasicItemList = this.removeCraftingItems(collectedBasicItems, itemFirstDigit, itemSecondDigit);
+      let filteredComponentItemList = this.removeCraftingItems(collectedComponentItems, itemFirstDigit, itemSecondDigit);
       let newItemlist: Item[] = [];
       newItemlist.push(newItem);
       
-      for (let j = 0; j < filteredBasicItemList.length; j++) {         
-        let newBasicItemToBePushed = this.getBasicItemById(filteredBasicItemList[j]);
-        newItemlist.push(newBasicItemToBePushed);
+      for (let j = 0; j < filteredComponentItemList.length; j++) {         
+        let newComponentItemToBePushed = this.getComponentItemById(filteredComponentItemList[j]);
+        newItemlist.push(newComponentItemToBePushed);
         head.push(newItem);
       }
       combinations.push(newItemlist);
@@ -156,18 +160,18 @@ export class DashboardComponent implements OnInit {
     return combinations;
   } 
  
-  removeCraftingItems(collectedBasicItems: number[], itemFirstDigit: number, itemSecondDigit: number) { 
-    let tempBasicItemList = cloneArray(collectedBasicItems);
-    let index1 = tempBasicItemList.indexOf(this.getBasicItemById(itemFirstDigit).id);
-    tempBasicItemList.splice(index1, 1);
-    let index2 = tempBasicItemList.indexOf(this.getBasicItemById(itemSecondDigit).id);
-    tempBasicItemList.splice(index2, 1);
-    return tempBasicItemList;
+  removeCraftingItems(collectedComponentItems: number[], itemFirstDigit: number, itemSecondDigit: number) { 
+    let tempComponentItemList = cloneArray(collectedComponentItems);
+    let index1 = tempComponentItemList.indexOf(this.getComponentItemById(itemFirstDigit).id);
+    tempComponentItemList.splice(index1, 1);
+    let index2 = tempComponentItemList.indexOf(this.getComponentItemById(itemSecondDigit).id);
+    tempComponentItemList.splice(index2, 1);
+    return tempComponentItemList;
   } 
 
  
-  getBasicItemById(id: number): Item { 
-    return this.basicItems[id - 1];
+  getComponentItemById(id: number): Item { 
+    return this.allComponentItems[id - 1];
   }
 
   getCraftedItemId(firstId: number, secondId: number): number {     
