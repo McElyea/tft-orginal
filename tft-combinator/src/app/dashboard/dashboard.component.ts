@@ -96,7 +96,7 @@ export class DashboardComponent implements OnInit {
     return this.allItems.find(item => item.id === itemId);
   }
   updateCombinations(): void {
-    this.itemCombinations = this.updateListCombinations(this.collectedItems, []);
+    //this.itemCombinations = this.updateListCombinations(this.collectedItems, []);
   }
 
   updateListCombinations(collectedItemsList: Item[], head: Item[]): Item[][] {    
