@@ -116,7 +116,7 @@ describe('DashboardComponent', () => {
 
   it('should populate bf sword if unique composite id contains one element that equals 16', () => {
     const uniqueCompositeItemIds = [16];
-    const expectedItem = component.populateCompositeItemsFromIds(uniqueCompositeItemIds);
+    const expectedItem = component.getCompositeItemsFromIds(uniqueCompositeItemIds);
     expect(expectedItem[0]).toEqual(component.findItemById(16));
   });
 
