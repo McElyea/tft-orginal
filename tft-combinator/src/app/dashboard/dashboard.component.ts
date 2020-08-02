@@ -11,10 +11,11 @@ export class DashboardComponent implements OnInit {
   allItems: Item[] = [];
   allComponentItems: Item[] = [];
   collectedItems: Item[] = [];
+  collectedItemIds: number[] = [];
   potentialCompositeItems: Item[] = [];
   potentialCompositeItemIds: number[] = [];
   itemCombinationIds: number[][] = [];
-  itemCombination: Item [][] = [];
+  itemCombinations: Item [][] = [];
 
 
   constructor(private itemService: ItemService) { }
@@ -35,13 +36,13 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  addCollectedItem(item: Item): void {
-    this.collectedItems.push(item);
+  addComponentItem(item: Item): void {
+    this.pushItemToCollectedItems(item);
     this.updateCraftableItems();
   }
 
-  addCraftedItem(item: Item): void {
-    this.collectedItems.push(item);
+  addCompositeItem(item: Item): void {
+    this.pushItemToCollectedItems(item);
     const itemFirstDigit = Math.floor(item.id / 10);
     const itemSecondDigit = item.id % 10;
     const newItem1 = this.getComponentItemById(itemFirstDigit);
@@ -57,18 +58,29 @@ export class DashboardComponent implements OnInit {
       const itemSecondDigit = item.id % 10;
       const newItem1 = this.getComponentItemById(itemFirstDigit);
       const newItem2 = this.getComponentItemById(itemSecondDigit);
-      this.collectedItems.push(newItem1);
-      this.collectedItems.push(newItem2);
+      this.pushItemToCollectedItems(newItem1);
+      this.pushItemToCollectedItems(newItem2);
     }
     this.collectedItems.splice(index, 1);
     this.updateCraftableItems();
   }
 
+  pushItemToCollectedItems(item: Item){
+    this.collectedItems.push(item);
+    this.collectedItemIds.push(item.id);
+  }
   updateCraftableItems(): void {
-    this.potentialCompositeItemIds = this.getUniqueCompositeItemIds([1, 6]);
-    this.potentialCompositeItems = this.populateCompositeItemsFromIds(this.potentialCompositeItemIds);
+    this.updateCurrentPotentialCompositeItems();
     this.updateCombinations();
   }
+
+
+  updateCurrentPotentialCompositeItems() {
+    const collectedComponentItemIds = this.getComponentItemIdsFromItemIds(this.collectedItemIds);
+    this.potentialCompositeItemIds = this.getUniqueCompositeItemIds(collectedComponentItemIds);
+    this.potentialCompositeItems = this.populateCompositeItemsFromIds(this.potentialCompositeItemIds);
+  }
+
 
   populateCompositeItemsFromIds(itemIds: number[]): Item[]{
     const returnItems: Item[] = [];
@@ -103,9 +115,9 @@ export class DashboardComponent implements OnInit {
     return this.allItems.find(item => item.id === itemId);
   }
 
-  getComponentItemIdsFromItemList(collectedItemsList: number[]): number[] {
+  getComponentItemIdsFromItemIds(collectedItems: number[]): number[] {
     const collectedComponentItemIds: number[] = [];
-    for (const cil of collectedItemsList) {
+    for (const cil of collectedItems) {
       const thisItemId = cil;
       if (thisItemId <= 9) {
         collectedComponentItemIds.push(thisItemId);
@@ -115,14 +127,14 @@ export class DashboardComponent implements OnInit {
   }
 
   updateCombinations(): void {
-    this.itemCombination = [];
+    this.itemCombinations = [];
     if (this.collectedItems.length < 2) {
       return;
     }
-    const collectedComponentItemIds = this.getComponentItemIdsFromItemList(
+    const collectedComponentItemIds = this.getComponentItemIdsFromItemIds(
       this.getItemIdsFromItems(this.collectedItems)
     );
-    this.potentialCompositeItems = this.populateComponentItemsFromIds(collectedComponentItemIds);
+    this.updateCurrentPotentialCompositeItems();
     if (collectedComponentItemIds.length < 2) {
       return;
     }
@@ -143,11 +155,11 @@ export class DashboardComponent implements OnInit {
   }
 
   iterateCombinations(collectedComponentItemIds: number[], head: number[]): void {
-    const currentCraftableList = this.getComponentItemIdsFromItemList(collectedComponentItemIds);
-    const currentCraftableListLength = currentCraftableList.length;
+    const currentCompositeItems = this.getComponentItemIdsFromItemIds(collectedComponentItemIds);
+    const currentCompositeItemsLength = currentCompositeItems.length;
 
-    for (let i = 0; i < currentCraftableListLength; i++) {
-      const currentSelectedItemId = currentCraftableList[i];
+    for (let i = 0; i < currentCompositeItemsLength; i++) {
+      const currentSelectedItemId = currentCompositeItems[i];
       const itemFirstDigit = Math.floor(currentSelectedItemId / 10);
       const itemSecondDigit = currentSelectedItemId % 10;
 
@@ -171,10 +183,10 @@ export class DashboardComponent implements OnInit {
   }
 
   removeComponentsSpentByCompositeItemCreation(collectedComponentItemIds: number[], itemFirstDigit: number, itemSecondDigit: number) {
-    const tempComponentItemList = cloneArray(collectedComponentItemIds);
-    tempComponentItemList.splice(itemFirstDigit, 1);
-    tempComponentItemList.splice(itemSecondDigit, 1);
-    return tempComponentItemList;
+    const tempComponentItems = cloneArray(collectedComponentItemIds);
+    tempComponentItems.splice(itemFirstDigit, 1);
+    tempComponentItems.splice(itemSecondDigit, 1);
+    return tempComponentItems;
   }
 
   getComponentItemById(id: number): Item {

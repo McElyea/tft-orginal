@@ -1,8 +1,8 @@
 
-<span class="grid grid-pad" name=allComponentItems> 
+<span class="grid grid-pad" name=allComponentItemss> 
   
 <h3>Component Items</h3> 
-  <a *ngFor="let item of allComponentItems" class="col-1-4" (click)="addCollectedItem(item)">
+  <a *ngFor="let item of allComponentItems" class="col-1-4" (click)="addComponentItem(item)">
     <button mat-raised-button color="primary" matTooltip="item.name"
       aria-label="Button that displays a tooltip when focused or hovered over" class="module item">
 
@@ -39,13 +39,13 @@ aria-orientation="horizontal">></mat-divider></span>
 
 <span class="grid grid-pad" name=potentialCompositeItems>
   
-<h3>Craftable Items</h3>
-  <a *ngFor="let craftableItem of potentialCompositeItems" class="col-1-4" (click)="addCraftedItem(craftableItem)">
+<h3>Possible Composite Items</h3>
+  <a *ngFor="let potentialCompositeItem of potentialCompositeItems" class="col-1-4" (click)="addCompositeItem(potentialCompositeItem)">
 
-    <button mat-raised-button matTooltip="craftableItem.name"
+    <button mat-raised-button matTooltip="potentialCompositeItem.name"
       aria-label="Button that displays a tooltip when focused or hovered over" class="module items-collected">
 
-      <img src="../../assets/img/{{craftableItem.name}}.png">
+      <img src="../../assets/img/{{potentialCompositeItem.name}}.png">
     </button>
 
   </a>
