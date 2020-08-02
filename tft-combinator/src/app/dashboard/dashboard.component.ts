@@ -12,7 +12,10 @@ export class DashboardComponent implements OnInit {
   allComponentItems: Item[] = [];
   collectedItems: Item[] = [];
   potentialCompositeItems: Item[] = [];
-  itemCombinations: Item[][] = [];
+  potentialCompositeItemIds: number[] = [];
+  itemCombinationIds: number[][] = [];
+  itemCombination: Item [][] = [];
+
 
   constructor(private itemService: ItemService) { }
 
@@ -24,7 +27,7 @@ export class DashboardComponent implements OnInit {
   getAllItems(): void {
     this.allItems = this.itemService.getItems();
   }
-  
+
   getAllComponentItems(): void {
     this.allComponentItems = [];
     for (let i = 1; i <= 9; i++) {
@@ -39,21 +42,21 @@ export class DashboardComponent implements OnInit {
 
   addCraftedItem(item: Item): void {
     this.collectedItems.push(item);
-    let itemFirstDigit = Math.floor(item.id / 10);
-    let itemSecondDigit = item.id % 10;
-    let newItem1 = this.getComponentItemById(itemFirstDigit);
-    let newItem2 = this.getComponentItemById(itemSecondDigit);
+    const itemFirstDigit = Math.floor(item.id / 10);
+    const itemSecondDigit = item.id % 10;
+    const newItem1 = this.getComponentItemById(itemFirstDigit);
+    const newItem2 = this.getComponentItemById(itemSecondDigit);
     this.removeCollectedItem(newItem1);
     this.removeCollectedItem(newItem2);
   }
 
   removeCollectedItem(item: Item): void {
-    let index = this.collectedItems.indexOf(item);
+    const index = this.collectedItems.indexOf(item);
     if (item.id > 9) {
-      let itemFirstDigit = Math.floor(item.id / 10);
-      let itemSecondDigit = item.id % 10;
-      let newItem1 = this.getComponentItemById(itemFirstDigit);
-      let newItem2 = this.getComponentItemById(itemSecondDigit);
+      const itemFirstDigit = Math.floor(item.id / 10);
+      const itemSecondDigit = item.id % 10;
+      const newItem1 = this.getComponentItemById(itemFirstDigit);
+      const newItem2 = this.getComponentItemById(itemSecondDigit);
       this.collectedItems.push(newItem1);
       this.collectedItems.push(newItem2);
     }
@@ -62,139 +65,122 @@ export class DashboardComponent implements OnInit {
   }
 
   updateCraftableItems(): void {
-
-    this.potentialCompositeItems = this.getUniqueCraftableItems(this.collectedItems);
+    this.potentialCompositeItemIds = this.getUniqueCompositeItemIds(this.collectedItems.map((x) => x.id));
     this.updateCombinations();
   }
 
-  getUniqueCraftableItems(items: Item[]): Item[] {
-    let uniqueCraftableItems: Item[] = [];
-    let itemIds: number[] = [];
-    for (let i = 0; i < items.length; i++) {
-      itemIds.push(items[i].id);
-    }
-
-    let max: number = itemIds.length;
+  getUniqueCompositeItemIds(itemIds: number[]): number[] {
+    const uniqueCraftableItemIds: number[] = [];
+    const max = itemIds.length;
     if (max >= 2) {
       for (let i = 0; i < max; i++) {
         for (let j = i + 1; j < max; j++) {
-          let firstId = itemIds[i];
-          let secondId = itemIds[j];
+          const firstId = itemIds[i];
+          const secondId = itemIds[j];
           if (firstId > 9 || secondId > 9) {
             continue;
           }
-          let newItemId = this.getCraftedItemId(firstId, secondId)
-          if (!uniqueCraftableItems.find(item => item.id === newItemId)) {            
-            uniqueCraftableItems.push(this.findItemById(newItemId));
+          const newItemId = this.getCompositeItemId(firstId, secondId);
+          if (!uniqueCraftableItemIds.includes(newItemId)) {
+            uniqueCraftableItemIds.push(newItemId);
           }
         }
       }
     }
-    return uniqueCraftableItems;
+    return uniqueCraftableItemIds;
   }
+
   findItemById(itemId: number): Item{
     return this.allItems.find(item => item.id === itemId);
   }
-  updateCombinations(): void {
-    //this.itemCombinations = this.updateListCombinations(this.collectedItems, []);
+
+  getComponentItemIdsFromItemList(collectedItemsList: number[]): number[] {
+    const collectedComponentItemIds: number[] = [];
+    for (const cil of collectedItemsList) {
+      const thisItemId = cil;
+      if (thisItemId <= 9) {
+        collectedComponentItemIds.push(thisItemId);
+      }
+    }
+    return collectedComponentItemIds;
   }
 
-  updateListCombinations(collectedItemsList: Item[], head: Item[]): Item[][] {    
-    if (collectedItemsList.length < 2) {
-      return [];
+  updateCombinations(): void {
+    this.itemCombination = [];
+    if (this.collectedItems.length < 2) {
+      return;
     }
-    let collectedComponentItems: number[] = [];
-    let collectedCraftedItems: number[] = [];
-    for (let i = 0; i < collectedItemsList.length; i++) {
-      let thisItemId = collectedItemsList[i].id;
-      if (thisItemId > 9) {
-        collectedCraftedItems.push(thisItemId);
-      }
-      else {
-        collectedComponentItems.push(thisItemId);
-      }
+    const collectedComponentItemIds = this.getComponentItemIdsFromItemList(
+      this.collectedItems.map((x) => x.id)
+    );
+
+    if (collectedComponentItemIds.length < 2) {
+      return;
     }
 
-    if (collectedComponentItems.length < 2) {
-      return [];
-    }
+    this.iterateCombinations(collectedComponentItemIds, []);
+  }
 
-    let remainingCombinations: Item[][] = this.iterateCombinations(collectedComponentItems, this.potentialCompositeItems, head);
-    for(let i = 0; i < remainingCombinations.length;i++){
-      if(remainingCombinations[i].length > 3){
-        let newCombos = this.updateListCombinations(remainingCombinations[i], head);
-        let craftedItems = head;
-        for(let j= 0; j< newCombos.length;j++){
-          if(newCombos[j].length > 3){
+  iterateCombinations(collectedComponentItemIds: number[], head: number[]): void {
+    const currentCraftableList = this.getComponentItemIdsFromItemList(collectedComponentItemIds);
+    const currentCraftableListLength = currentCraftableList.length;
 
-          }
-        }
+    for (let i = 0; i < currentCraftableListLength; i++) {
+      const currentSelectedItemId = currentCraftableList[i];
+      const itemFirstDigit = Math.floor(currentSelectedItemId / 10);
+      const itemSecondDigit = currentSelectedItemId % 10;
+
+      const remainingComponentItemIds = this.removeComponentsSpentByCompositeItemCreation(
+        collectedComponentItemIds, itemFirstDigit, itemSecondDigit
+      );
+      const possibleItemCombinationIds: number[] = [];
+      possibleItemCombinationIds.push(currentSelectedItemId);
+      if (remainingComponentItemIds.length >= 2){
+        head.push(currentSelectedItemId);
+        this.iterateCombinations(remainingComponentItemIds, head);
       }
       else{
-
+        for (const rcii of remainingComponentItemIds) {
+          const newComponentItemToBePushed = this.getComponentItemById(rcii);
+          possibleItemCombinationIds.push(newComponentItemToBePushed.id);
+        }
+        this.itemCombinationIds.push(possibleItemCombinationIds);
       }
-    
     }
-    return remainingCombinations;     
   }
 
-  private iterateCombinations(collectedComponentItems: number[], craftableItems: Item[], head: Item[]): Item[][] {
-    let currentCraftableList = cloneArray(craftableItems);
-    let currentCraftableListLength = currentCraftableList.length;
-    let combinations: Item[][] = [];
-    for (let i = 0; i < currentCraftableListLength; i++) {
-      let newItem = currentCraftableList[i];
-      let itemFirstDigit = Math.floor(newItem.id / 10);
-      let itemSecondDigit = newItem.id % 10;
-      let filteredComponentItemList = this.removeCraftingItems(collectedComponentItems, itemFirstDigit, itemSecondDigit);
-      let newItemlist: Item[] = [];
-      newItemlist.push(newItem);
-      
-      for (let j = 0; j < filteredComponentItemList.length; j++) {         
-        let newComponentItemToBePushed = this.getComponentItemById(filteredComponentItemList[j]);
-        newItemlist.push(newComponentItemToBePushed);
-        head.push(newItem);
-      }
-      combinations.push(newItemlist);
-    }
-    return combinations;
-  } 
- 
-  removeCraftingItems(collectedComponentItems: number[], itemFirstDigit: number, itemSecondDigit: number) { 
-    let tempComponentItemList = cloneArray(collectedComponentItems);
-    let index1 = tempComponentItemList.indexOf(this.getComponentItemById(itemFirstDigit).id);
+  removeComponentsSpentByCompositeItemCreation(collectedComponentItemIds: number[], itemFirstDigit: number, itemSecondDigit: number) {
+    const tempComponentItemList = cloneArray(collectedComponentItemIds);
+    const index1 = tempComponentItemList.indexOf(this.getComponentItemById(itemFirstDigit).id);
     tempComponentItemList.splice(index1, 1);
-    let index2 = tempComponentItemList.indexOf(this.getComponentItemById(itemSecondDigit).id);
+    const index2 = tempComponentItemList.indexOf(this.getComponentItemById(itemSecondDigit).id);
     tempComponentItemList.splice(index2, 1);
     return tempComponentItemList;
-  } 
+  }
 
- 
-  getComponentItemById(id: number): Item { 
+  getComponentItemById(id: number): Item {
     return this.allComponentItems[id - 1];
   }
 
-  getCraftedItemId(firstId: number, secondId: number): number {     
+  getCompositeItemId(firstId: number, secondId: number): number {
     if (firstId > secondId) {
-      let tempId = secondId;
+      const tempId = secondId;
       secondId = firstId;
       firstId = tempId;
     }
-    let newItemId = firstId * 10 + secondId;
-    return newItemId;
+    return firstId * 10 + secondId;
   }
-
 }
 function removeItemFromList(list: any[], itemToRemove: any) {
-  let newList = cloneArray(list);
-  let id = newList.findIndex(itemToRemove);
-  return list.splice(id,1);
+  const newList = cloneArray(list);
+  const id = newList.findIndex(itemToRemove);
+  return list.splice(id, 1);
 }
 
 function cloneArray(list: any[]) {
-  let tempList = [];
-  for (let x = 0; x < list.length; x++) {
-    tempList.push(list[x]);
+  const tempList = [];
+  for (const item of list){
+    tempList.push(item);
   }
   return tempList;
 }

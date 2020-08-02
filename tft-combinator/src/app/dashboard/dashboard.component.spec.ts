@@ -18,7 +18,7 @@ describe('DashboardComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DashboardComponent);
-    component = fixture.componentInstance;    
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
@@ -37,17 +37,17 @@ describe('DashboardComponent', () => {
   });
 
   it('should return composite item id', () => {
-    const compositeItemId = component.getCraftedItemId(1, 5);
+    const compositeItemId = component.getCompositeItemId(1, 5);
     expect(compositeItemId).toEqual(15);
   });
 
   it('should return composite item id even out of order', () => {
-    const compositeItemId = component.getCraftedItemId(5, 1);
+    const compositeItemId = component.getCompositeItemId(5, 1);
     expect(compositeItemId).toEqual(15);
   });
 
   it('should return composite item', () => {
-    const compositeItemId = component.getCraftedItemId(5, 1);
+    const compositeItemId = component.getCompositeItemId(5, 1);
     const compositeItem = component.findItemById(compositeItemId);
     expect(compositeItem.id).toEqual(15);
     expect(compositeItem.name).toEqual('Guardian Angel');
@@ -78,7 +78,7 @@ describe('DashboardComponent', () => {
     const componentItemShell = component.getComponentItemById(6);
     component.addCollectedItem(componentItemShell);
     expect(component.collectedItems.length).toEqual(2);
-    const compositeItemId = component.getCraftedItemId(6,1);
+    const compositeItemId = component.getCompositeItemId(6,1);
     const compositeItem = component.findItemById(compositeItemId);
     component.addCraftedItem(compositeItem);
     expect(component.collectedItems.length).toEqual(1);
@@ -91,7 +91,7 @@ describe('DashboardComponent', () => {
     component.addCollectedItem(componentItemSword);
     const componentItemShell = component.getComponentItemById(6);
     component.addCollectedItem(componentItemShell);
-    const compositeItemId = component.getCraftedItemId(6, 1);
+    const compositeItemId = component.getCompositeItemId(6, 1);
     const compositeItem = component.findItemById(compositeItemId);
     component.addCraftedItem(compositeItem);
     expect(component.collectedItems.length).toEqual(1);
@@ -110,7 +110,7 @@ describe('DashboardComponent', () => {
     component.addCollectedItem(componentItemSword);
     const componentItemShell = component.getComponentItemById(6);
     component.addCollectedItem(componentItemShell);
-    const compositeItemId = component.getCraftedItemId(6, 1);
+    const compositeItemId = component.getCompositeItemId(6, 1);
     const compositeItem = component.findItemById(compositeItemId);
     expect(component.potentialCompositeItems[0]).toEqual(compositeItem);
   });
@@ -120,7 +120,7 @@ describe('DashboardComponent', () => {
     component.addCollectedItem(componentItemSword);
     const componentItemShell = component.getComponentItemById(6);
     component.addCollectedItem(componentItemShell);
-    const compositeItemId = component.getCraftedItemId(5, 1);
+    const compositeItemId = component.getCompositeItemId(5, 1);
     const compositeItem = component.findItemById(compositeItemId);
     expect(component.potentialCompositeItems[0]).not.toEqual(compositeItem);
   });
@@ -173,6 +173,66 @@ describe('DashboardComponent', () => {
     component.addCollectedItem(component.allComponentItems[3]);
     component.addCollectedItem(component.allComponentItems[4]);
     expect(component.potentialCompositeItems.length).toEqual(10);
+  });
+
+  it('should have 15 unique possible item combination given 6 unique component items', () => {
+    component.addCollectedItem(component.allComponentItems[0]);
+    component.addCollectedItem(component.allComponentItems[1]);
+    component.addCollectedItem(component.allComponentItems[2]);
+    component.addCollectedItem(component.allComponentItems[3]);
+    component.addCollectedItem(component.allComponentItems[4]);
+    component.addCollectedItem(component.allComponentItems[5]);
+    expect(component.potentialCompositeItems.length).toEqual(15);
+  });
+
+  it('should have 21 unique possible item combination given 7 unique component items', () => {
+    component.addCollectedItem(component.allComponentItems[0]);
+    component.addCollectedItem(component.allComponentItems[1]);
+    component.addCollectedItem(component.allComponentItems[2]);
+    component.addCollectedItem(component.allComponentItems[3]);
+    component.addCollectedItem(component.allComponentItems[4]);
+    component.addCollectedItem(component.allComponentItems[5]);
+    component.addCollectedItem(component.allComponentItems[6]);
+    expect(component.potentialCompositeItems.length).toEqual(21);
+  });
+
+  it('should have 28 unique possible item combination given 7 unique component items', () => {
+    component.addCollectedItem(component.allComponentItems[0]);
+    component.addCollectedItem(component.allComponentItems[1]);
+    component.addCollectedItem(component.allComponentItems[2]);
+    component.addCollectedItem(component.allComponentItems[3]);
+    component.addCollectedItem(component.allComponentItems[4]);
+    component.addCollectedItem(component.allComponentItems[5]);
+    component.addCollectedItem(component.allComponentItems[6]);
+    component.addCollectedItem(component.allComponentItems[7]);
+    expect(component.potentialCompositeItems.length).toEqual(28);
+  });
+
+  it('should have 36 unique possible item combination given 8 unique component items', () => {
+    component.addCollectedItem(component.allComponentItems[0]);
+    component.addCollectedItem(component.allComponentItems[1]);
+    component.addCollectedItem(component.allComponentItems[2]);
+    component.addCollectedItem(component.allComponentItems[3]);
+    component.addCollectedItem(component.allComponentItems[4]);
+    component.addCollectedItem(component.allComponentItems[5]);
+    component.addCollectedItem(component.allComponentItems[6]);
+    component.addCollectedItem(component.allComponentItems[7]);
+    component.addCollectedItem(component.allComponentItems[8]);
+    expect(component.potentialCompositeItems.length).toEqual(36);
+  });
+
+  it('should have 45 unique possible item combination given 9 unique component items', () => {
+    component.addCollectedItem(component.allComponentItems[0]);
+    component.addCollectedItem(component.allComponentItems[1]);
+    component.addCollectedItem(component.allComponentItems[2]);
+    component.addCollectedItem(component.allComponentItems[3]);
+    component.addCollectedItem(component.allComponentItems[4]);
+    component.addCollectedItem(component.allComponentItems[5]);
+    component.addCollectedItem(component.allComponentItems[6]);
+    component.addCollectedItem(component.allComponentItems[7]);
+    component.addCollectedItem(component.allComponentItems[8]);
+    component.addCollectedItem(component.allComponentItems[9]);
+    expect(component.potentialCompositeItems.length).toEqual(45);
   });
 
   it('should create', () => {
