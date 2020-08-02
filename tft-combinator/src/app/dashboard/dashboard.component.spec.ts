@@ -122,8 +122,61 @@ describe('DashboardComponent', () => {
     component.addCollectedItem(componentItemShell);    
     let compositeItemId = component.getCraftedItemId(5,1);
     let compositeItem = component.findItemById(compositeItemId);
-    expect(component.potentialCompositeItems[0]).toEqual(compositeItem);
+    expect(component.potentialCompositeItems[0]).not.toEqual(compositeItem);
   });
+
+  it('should have 36 potentialCompositeItmes given 9 unique component items in the collected ite', () => {
+
+    for (let i = 0; i < component.allComponentItems.length; i++) {
+        component.addCollectedItem(component.allComponentItems[i]);
+    }    
+    expect(component.potentialCompositeItems.length).toEqual(36);
+  });
+
+  it('should have 45 potentialCompositeItmes given that each component item is added twice', () => {
+    for (let i = 0; i < component.allComponentItems.length; i++) {
+      component.addCollectedItem(component.allComponentItems[i]);      
+      component.addCollectedItem(component.allComponentItems[i]);
+    }  
+   
+    expect(component.potentialCompositeItems.length).toEqual(45);
+  });
+
+  it('should have 0 unique possible item combinations given 1 component item',() => {
+    component.addCollectedItem(component.allComponentItems[0]);  
+    expect(component.potentialCompositeItems.length).toEqual(0);
+  });
+
+  it('should have 1 unique possible item combination given 2 component items',() => {
+    component.addCollectedItem(component.allComponentItems[0]);
+    component.addCollectedItem(component.allComponentItems[1]);  
+    expect(component.potentialCompositeItems.length).toEqual(1);
+  });
+
+  it('should have 3 unique possible item combination given 3 component items',() => {
+    component.addCollectedItem(component.allComponentItems[0]);
+    component.addCollectedItem(component.allComponentItems[1]);  
+    component.addCollectedItem(component.allComponentItems[2]);  
+    expect(component.potentialCompositeItems.length).toEqual(3);
+  });
+
+  it('should have 3 unique possible item combination given 4 unique component items',() => {
+    component.addCollectedItem(component.allComponentItems[0]);
+    component.addCollectedItem(component.allComponentItems[1]);  
+    component.addCollectedItem(component.allComponentItems[2]);  
+    component.addCollectedItem(component.allComponentItems[3]);
+    expect(component.potentialCompositeItems.length).toEqual(3);
+  });
+
+  it('should have ? unique possible item combination given 5 unique component items',() => {
+    component.addCollectedItem(component.allComponentItems[0]);
+    component.addCollectedItem(component.allComponentItems[1]);  
+    component.addCollectedItem(component.allComponentItems[2]);  
+    component.addCollectedItem(component.allComponentItems[3]);    
+    component.addCollectedItem(component.allComponentItems[4]);
+    expect(component.potentialCompositeItems.length).toEqual(3);
+  });
+
 
   it('should create', () => {
    expect(component).toBeTruthy();
