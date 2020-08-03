@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Item } from "../item";
+import { Item } from '../item';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { ItemService }  from '../item.service';
+import { ItemService } from '../item.service';
 @Component({
   selector: 'app-items-collected',
   templateUrl: './items-collected.component.html',
@@ -11,9 +11,9 @@ import { ItemService }  from '../item.service';
 })
 export class ItemsCollectedComponent implements OnInit {
   @Input() item: Item;
-  
+
   collectedItems: Item[] = [];
-  
+
   constructor(
     private route: ActivatedRoute,
     private itemService: ItemService,
@@ -30,7 +30,7 @@ export class ItemsCollectedComponent implements OnInit {
     const id = +this.route.snapshot.paramMap.get('id');
     this.itemService.getItem(id)
       .subscribe(item => this.item = item);
-  } 
+  }
 
   onSelect(item: Item): void {
     console.log(item);
@@ -40,4 +40,4 @@ export class ItemsCollectedComponent implements OnInit {
     console.log(item.name);
   }
 
-} 
+}
