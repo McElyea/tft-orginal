@@ -23,7 +23,7 @@ describe('DashboardComponent', () => {
   });
 
   it('should load the all items with all 54 composite and component items', () => {
-    expect(component.allItems.length).toEqual(54);
+    expect(Object.keys(component.allItems).length).toEqual(54);
   });
 
   it('should load the component items with 9 items', () => {
@@ -31,31 +31,14 @@ describe('DashboardComponent', () => {
   });
 
   it('should return the bf sword', () => {
-    const componentItem = component.getComponentItemById(1);
+    const componentItem = component.getItemById(1);
     expect(componentItem.id).toEqual(1);
     expect(componentItem.name).toEqual('B.F. Sword');
   });
 
-  it('should return composite item id', () => {
-    const compositeItemId = component.getCompositeItemId(1, 5);
-    expect(compositeItemId).toEqual(15);
-  });
-
-  it('should return composite item id even out of order', () => {
-    const compositeItemId = component.getCompositeItemId(5, 1);
-    expect(compositeItemId).toEqual(15);
-  });
-
-  it('should return composite item', () => {
-    const compositeItemId = component.getCompositeItemId(5, 1);
-    const compositeItem = component.findItemById(compositeItemId);
-    expect(compositeItem.id).toEqual(15);
-    expect(compositeItem.name).toEqual('Guardian Angel');
-  });
-
   it('should add the component item tear of the goddess to collected items', () => {
     expect(component.collectedItems.length).toEqual(0);
-    const componentItem = component.getComponentItemById(4);
+    const componentItem = component.getItemById(4);
     component.addComponentItem(componentItem);
     expect(component.collectedItems.length).toEqual(1);
     expect(component.collectedItems[0].id).toEqual(4);
@@ -64,7 +47,7 @@ describe('DashboardComponent', () => {
   });
 
   it('should remove componentItem tear from collected items', () => {
-    const componentItem = component.getComponentItemById(4);
+    const componentItem = component.getItemById(4);
     component.addComponentItem(componentItem);
     expect(component.collectedItems.length).toEqual(1);
     component.removeCollectedItem(componentItem);
@@ -73,13 +56,12 @@ describe('DashboardComponent', () => {
 
   it('should add the craftedItem Bloodthirster to collected items and remove the component item components', () => {
     expect(component.collectedItems.length).toEqual(0);
-    const componentItemSword = component.getComponentItemById(1);
+    const componentItemSword = component.getItemById(1);
     component.addComponentItem(componentItemSword);
-    const componentItemShell = component.getComponentItemById(6);
+    const componentItemShell = component.getItemById(6);
     component.addComponentItem(componentItemShell);
     expect(component.collectedItems.length).toEqual(2);
-    const compositeItemId = component.getCompositeItemId(6, 1);
-    const compositeItem = component.findItemById(compositeItemId);
+    const compositeItem = component.getItemById(16);
     component.addCompositeItem(compositeItem);
     expect(component.collectedItems.length).toEqual(1);
     expect(component.collectedItems[0].name).toEqual('Bloodthirster');
@@ -87,12 +69,11 @@ describe('DashboardComponent', () => {
   });
 
   it('should remove the craftedItem Bloodthirster from collected items and add the component items back to collecteditems', () => {
-    const componentItemSword = component.getComponentItemById(1);
+    const componentItemSword = component.getItemById(1);
     component.addComponentItem(componentItemSword);
-    const componentItemShell = component.getComponentItemById(6);
+    const componentItemShell = component.getItemById(6);
     component.addComponentItem(componentItemShell);
-    const compositeItemId = component.getCompositeItemId(6, 1);
-    const compositeItem = component.findItemById(compositeItemId);
+    const compositeItem = component.getItemById(16);
     component.addCompositeItem(compositeItem);
     expect(component.collectedItems.length).toEqual(1);
     expect(component.collectedItems[0].name).toEqual('Bloodthirster');
@@ -106,37 +87,35 @@ describe('DashboardComponent', () => {
   });
 
   it('should have unique composite id of 16 if collected items has sword and shell', () => {
-    const componentItemSword = component.getComponentItemById(1);
+    const componentItemSword = component.getItemById(1);
     component.addComponentItem(componentItemSword);
-    const componentItemShell = component.getComponentItemById(6);
+    const componentItemShell = component.getItemById(6);
     component.addComponentItem(componentItemShell);
-    const uniqueCompositeItemIds = component.getUniqueCompositeItemIds([componentItemSword.id, componentItemShell.id]);
+    const uniqueCompositeItemIds = component.getUniqueCompositeIdsFromComponentIds([componentItemSword.id, componentItemShell.id]);
     expect(uniqueCompositeItemIds).toEqual([16]);
   });
 
   it('should populate bf sword if unique composite id contains one element that equals 16', () => {
     const uniqueCompositeItemIds = [16];
     const expectedItem = component.getCompositeItemsFromIds(uniqueCompositeItemIds);
-    expect(expectedItem[0]).toEqual(component.findItemById(16));
+    expect(expectedItem[0]).toEqual(component.getItemById(16));
   });
 
   it('should have BloodThirster in potential composite items if a sword and shell are int the collected items list', () => {
-    const componentItemSword = component.getComponentItemById(1);
+    const componentItemSword = component.getItemById(1);
     component.addComponentItem(componentItemSword);
-    const componentItemShell = component.getComponentItemById(6);
+    const componentItemShell = component.getItemById(6);
     component.addComponentItem(componentItemShell);
-    const compositeItemId = component.getCompositeItemId(1, 6);
-    const compositeItem = component.findItemById(compositeItemId);
+    const compositeItem = component.getItemById(16);
     expect(component.potentialCompositeItems[0]).toEqual(compositeItem);
   });
 
   it('should not have Guardian Angel in potential composite items if a sword and shell are in the collected item list', () => {
-    const componentItemSword = component.getComponentItemById(1);
+    const componentItemSword = component.getItemById(1);
     component.addComponentItem(componentItemSword);
-    const componentItemShell = component.getComponentItemById(6);
+    const componentItemShell = component.getItemById(6);
     component.addComponentItem(componentItemShell);
-    const compositeItemId = component.getCompositeItemId(5, 1);
-    const compositeItem = component.findItemById(compositeItemId);
+    const compositeItem = component.getItemById(15);
     expect(component.potentialCompositeItems[0]).not.toEqual(compositeItem);
   });
 
