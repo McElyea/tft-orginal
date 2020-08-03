@@ -106,6 +106,9 @@ export class DashboardComponent implements OnInit {
     return(itemId <= 9);
   }
 
+  isCompositeItemId(itemId: number, index: any, array: any){
+    return(itemId > 9);
+  }
   updateCombinations(): void {
     this.itemCombinations = [];
     if (this.collectedItems.length < 2) {
@@ -119,7 +122,7 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    //this.iterateCombinations(collectedComponentItemIds, []);
+    this.iterateCombinations(collectedComponentItemIds, []);
   }
 
   getItemIdsFromItems(items: Item[]): number[]{
@@ -135,12 +138,14 @@ export class DashboardComponent implements OnInit {
   }
 
   iterateCombinations(collectedComponentItemIds: number[], head: number[]): void {
-    for (const currentSelectedItemId of collectedComponentItemIds){
-      const remainingComponentItemIds = this.removeComponentsSpentByCompositeItemCreation(collectedComponentItemIds, currentSelectedItemId);
+
+    for (const currentCompositeItemId of this.collectedItemIds.filter(this.isCompositeItemId)){
+      const remainingComponentItemIds =
+        this.removeComponentsSpentByCompositeItemCreation(collectedComponentItemIds, currentCompositeItemId);
       const possibleItemCombinationIds: number[] = [];
-      possibleItemCombinationIds.push(currentSelectedItemId);
+      possibleItemCombinationIds.push(currentCompositeItemId);
       if (remainingComponentItemIds.length >= 2){
-        head.push(currentSelectedItemId);
+        head.push(currentCompositeItemId);
         this.iterateCombinations(remainingComponentItemIds, head);
       }
       else{
