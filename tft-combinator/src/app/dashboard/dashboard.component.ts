@@ -159,11 +159,11 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    this.iterateCombinations(collectedComponentItemIds, []);
-    this.updateItemCombinations();
+   // this.iterateCombinations(collectedComponentItemIds, []);
+   // this.updateItemCombinations();
   }
 
-  updateItemCombinations(): (value: any) => any{
+  updateItemCombinations(): void{
     for (const itemCombinationIds of this.itemCombinationIds){
       const currentItemList = [];
       for (const itemIds of itemCombinationIds){
@@ -171,7 +171,6 @@ export class DashboardComponent implements OnInit {
       }
       this.itemCombinations.push(currentItemList);
     }
-    return ;
   }
 
   iterateCombinations(collectedComponentItemIds: number[], head: number[]): void {
