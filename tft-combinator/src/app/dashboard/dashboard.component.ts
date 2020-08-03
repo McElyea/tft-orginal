@@ -90,8 +90,24 @@ export class DashboardComponent implements OnInit {
   }
 
   getUniqueCompositeItemIds(itemIds: number[]): number[] {
-    const productCompositeItemIds = itemIds.reduce( (acc, v, i) => acc.concat(itemIds.slice(i + 1).map( w => v * 10 + w )), []);
-    return productCompositeItemIds.filter((n, i) => productCompositeItemIds.indexOf(n) === i);
+    const uniqueCraftableItemIds: number[] = [];
+    const max = itemIds.length;
+    if (max >= 2) {
+      for (let i = 0; i < max; i++) {
+        for (let j = i + 1; j < max; j++) {
+          const firstId = itemIds[i];
+          const secondId = itemIds[j];
+          if (firstId > 9 || secondId > 9) {
+            continue;
+          }
+          const newItemId = this.getCompositeItemId(firstId, secondId);
+          if (!uniqueCraftableItemIds.includes(newItemId)) {
+            uniqueCraftableItemIds.push(newItemId);
+          }
+        }
+      }
+    }
+    return uniqueCraftableItemIds;
   }
 
   findItemById(itemId: number): Item{
