@@ -4,7 +4,7 @@ export class Item {
 
     constructor(id?: any){
         let thisid = 0;
-        if(typeof id === "string")
+        if (typeof id === 'string')
         {
             thisid = +id;
         }
@@ -13,5 +13,4 @@ export class Item {
         }
         this.id = id;
     }
-
 }
