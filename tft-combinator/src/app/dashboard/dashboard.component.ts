@@ -67,10 +67,10 @@ export class DashboardComponent implements OnInit {
       this.pushItemToCollectedItems(newItem1);
       this.pushItemToCollectedItems(newItem2);
     }
-    const index = this.collectedItems.indexOf(item);
-    this.collectedItems.splice(index, 1);
-    const index2 = this.collectedItemIds.indexOf(item.id);
-    this.collectedItemIds.splice(index2, 1);
+    const itemIndex = this.collectedItems.indexOf(item);
+    this.collectedItems.splice(itemIndex, 1);
+    const itemIdIndex = this.collectedItemIds.indexOf(item.id);
+    this.collectedItemIds.splice(itemIdIndex, 1);
     this.updateCraftableItems();
   }
 
@@ -85,8 +85,7 @@ export class DashboardComponent implements OnInit {
   }
 
   updateCurrentPotentialCompositeItems() {
-    const collectedComponentItemIds = this.getComponentItemIdsFromCollectedItemIds(this.collectedItemIds);
-    this.potentialCompositeItemIds = this.getUniqueCompositeIdsFromComponentIds(collectedComponentItemIds);
+    this.potentialCompositeItemIds = this.getUniqueCompositeIdsFromItemIds(this.collectedItemIds);
     this.potentialCompositeItems = this.getCompositeItemsFromIds(this.potentialCompositeItemIds);
   }
 
@@ -98,10 +97,6 @@ export class DashboardComponent implements OnInit {
     return returnItems;
   }
 
-  getItemIdsFromItems(items: Item[]): number[]{
-    return items.map((x) => x.id);
-  }
-
   getComponentItemsFromIds(itemIds: number[]): Item[]{
     const returnItems = [];
     for (const itemId of itemIds){
@@ -109,7 +104,7 @@ export class DashboardComponent implements OnInit {
     }
     return returnItems;
   }
-  getUniqueCompositeIdsFromComponentIds(itemIds: number[]): number[] {
+  getUniqueCompositeIdsFromItemIds(itemIds: number[]): number[] {
     const uniqueCraftableItemIds: number[] = [];
     const max = itemIds.length;
     if (max >= 2) {
@@ -139,68 +134,75 @@ export class DashboardComponent implements OnInit {
     return this.allItems[itemId];
   }
 
-  getComponentItemIdsFromCollectedItemIds(collectedItems: number[]): number[] {
-    return collectedItems.filter(this.isComponentItemId);
-  }
-
-  isComponentItemId(itemId: number, index: any, array: any){
-    return(itemId <= 9);
-  }
-
-  isCompositeItemId(itemId: number, index: any, array: any){
-    return(itemId > 9);
-  }
-
   updateCombinations(): void {
     this.itemCombinations = [];
+    this.itemCombinationIds = [];
     if (this.collectedItems.length < 2) {
       return;
     }
-    const collectedComponentItemIds = this.collectedItemIds.filter(this.isComponentItemId);
-
     this.updateCurrentPotentialCompositeItems();
-    if (collectedComponentItemIds.length < 2) {
-      return;
-    }
-
-    this.iterateCombinations(collectedComponentItemIds, []);
+    this.iterateCombinations(this.collectedItemIds.filter(isComponentItem), []);
     this.makeCombinationsUnique();
     this.updateItemCombinations();
   }
 
   makeCombinationsUnique() {
-    this.itemCombinationIds = [ ...this.itemCombinationIds];
-    for (const itemCombinationIds of this.itemCombinationIds){
-      const currentItemList = [];
-      for (const itemIds of itemCombinationIds){
-        currentItemList.push(this.getItemById(itemIds));
+
+    console.log('itemIds = ');
+
+    console.log(this.itemCombinationIds);
+    const workingCombinations: number[][] = [];
+    for (const itemComboIds of this.itemCombinationIds){
+      console.log('itemComboIds = ');
+      console.log(itemComboIds);
+      const componentItems = itemComboIds.filter(isComponentItem);
+      const numberOfComponents = componentItems.length || 0;
+      if (numberOfComponents === 1 && itemComboIds.length === 2 || isEven(itemComboIds.length)  && numberOfComponents > 1){
+        continue;
       }
-      this.itemCombinations.push(currentItemList);
+      const itemIds = this.sortDesc(itemComboIds);
+      if (!workingCombinations.includes(itemIds)){
+        workingCombinations.push(itemIds);
+      }
     }
+    this.itemCombinationIds = workingCombinations;
+    console.log('workingCombinations = ' + workingCombinations);
+  }
+
+  sortDesc(itemIds: number[]) {
+
+    let sortedIds: number[] = cloneArray(itemIds);
+
+    console.log(sortedIds);
+    sortedIds = sortedIds.sort((a, b) => b - a);
+
+    console.log(sortedIds);
+    return sortedIds;
   }
 
   updateItemCombinations(): void{
-    for (const itemCombinationIds of this.itemCombinationIds){
-      const currentItemList = [];
-      for (const itemIds of itemCombinationIds){
-        currentItemList.push(this.getItemById(itemIds));
+    this.itemCombinations = [];
+    const combos: number[][] = cloneArray(this.itemCombinationIds);
+    const icIdsLength = combos.length;
+    if (icIdsLength === 0) { return ; }
+    for (let i = 0; i < icIdsLength; i++){
+      const itemCombo = combos[i];
+      const itemComboLength = itemCombo.length;
+      const items: Item[] = [];
+      for (let j = 0; j < itemComboLength; j++){
+        const itemId: number = itemCombo[j];
+        items.push(this.getItemById(itemId));
       }
-      this.itemCombinations.push(currentItemList);
+      this.itemCombinations.push(items);
     }
   }
 
   iterateCombinations(collectedComponentItemIds: number[], head: number[]): void {
     const componentIds = cloneArray(collectedComponentItemIds);
-    const uniqueCompositeIds = this.getUniqueCompositeIdsFromComponentIds(componentIds);
+    const uniqueCompositeIds = this.getUniqueCompositeIdsFromItemIds(componentIds);
     for (const currentCompositeItemId of uniqueCompositeIds){
       const remainingComponentItemIds = this.removeComponentsSpentByCompositeItemCreation(componentIds, currentCompositeItemId);
-      const possibleItemCombinationIds: number[] = [];
       head.push(currentCompositeItemId);
-      possibleItemCombinationIds.push(currentCompositeItemId);
-      for (const rcii of remainingComponentItemIds) {
-          const newComponentItemToBePushed = this.getItemById(rcii);
-          possibleItemCombinationIds.push(newComponentItemToBePushed.id);
-        }
       const itemIdsToBePushed = [];
       if (head.length > 0) { itemIdsToBePushed.push(head); }
       for (const rcii of remainingComponentItemIds) {
@@ -212,16 +214,30 @@ export class DashboardComponent implements OnInit {
   }
 
   removeComponentsSpentByCompositeItemCreation(collectedComponentItemIds: number[], itemId: number): number[]{
-    let transformedComponentItemIds = cloneArray(collectedComponentItemIds);
+    const transformedComponentItemIds = cloneArray(collectedComponentItemIds);
     const itemTensDecimalPlace = Math.floor(itemId / 10);
     const itemOnesDecimalPlace = itemId % 10;
-    transformedComponentItemIds = transformedComponentItemIds.splice(itemTensDecimalPlace, 1);
-    transformedComponentItemIds = transformedComponentItemIds.splice(itemOnesDecimalPlace, 1);
+    const itemInitemTensIndex = collectedComponentItemIds.find((id) => itemTensDecimalPlace === id);
+    transformedComponentItemIds.splice(itemInitemTensIndex, 1);
+    const itemInitemOnesIndex = collectedComponentItemIds.find((id) => itemOnesDecimalPlace === id);
+    transformedComponentItemIds.splice(itemInitemOnesIndex, 1);
     return transformedComponentItemIds;
   }
 
 }
 
-function cloneArray(list: any[]) {
-  return [...list];
+function cloneArray(arr: any[]) {
+  const returnArray = [];
+  for (const item of arr){
+    returnArray.push(item);
+  }
+  return returnArray;
+}
+
+function isComponentItem(element: number, index, array){
+  return element < 10;
+}
+
+function isEven(n: number): boolean{
+  return n % 2 === 0;
 }

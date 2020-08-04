@@ -91,7 +91,7 @@ describe('DashboardComponent', () => {
     component.addComponentItem(componentItemSword);
     const componentItemShell = component.getItemById(6);
     component.addComponentItem(componentItemShell);
-    const uniqueCompositeItemIds = component.getUniqueCompositeIdsFromComponentIds([componentItemSword.id, componentItemShell.id]);
+    const uniqueCompositeItemIds = component.getUniqueCompositeIdsFromItemIds([componentItemSword.id, componentItemShell.id]);
     expect(uniqueCompositeItemIds).toEqual([16]);
   });
 
@@ -219,6 +219,27 @@ describe('DashboardComponent', () => {
     let itemIds = [1, 2];
     itemIds = component.removeComponentsSpentByCompositeItemCreation(itemIds, 12);
     expect(itemIds.length).toEqual(0);
+  });
+
+  it('should remove a two items from list of 3 numbers based on single two digit number', () => {
+    let itemIds = [1, 2, 3];
+    itemIds = component.removeComponentsSpentByCompositeItemCreation(itemIds, 12);
+    expect(itemIds).toEqual([1]);
+  });
+
+  it('should sort the array [1,2,3] in desc order [3,2,1]', () => {
+    let itemIds: number[] = [1, 2, 3];
+    console.log('itemIds = ' + itemIds);
+    itemIds = itemIds.sort((a, b) => b - a);
+    console.log('sorted ids = ' + itemIds);
+    expect(itemIds).toEqual([3, 2, 1]);
+  });
+
+
+  it('should sort the array [11,32,31] in desc order [32,31,11]', () => {
+    let itemIds: number[] = [11, 32, 31];
+    itemIds = itemIds.sort((a, b) => b - a);
+    expect(itemIds).toEqual([32, 31, 11]);
   });
 
   it('should create', () => {
