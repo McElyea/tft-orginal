@@ -69,6 +69,8 @@ export class DashboardComponent implements OnInit {
     }
     const index = this.collectedItems.indexOf(item);
     this.collectedItems.splice(index, 1);
+    const index2 = this.collectedItemIds.indexOf(item.id);
+    this.collectedItemIds.splice(index2, 1);
     this.updateCraftableItems();
   }
 
@@ -83,7 +85,7 @@ export class DashboardComponent implements OnInit {
   }
 
   updateCurrentPotentialCompositeItems() {
-    const collectedComponentItemIds = this.getComponentItemIdsFromItemIds(this.collectedItemIds);
+    const collectedComponentItemIds = this.getComponentItemIdsFromCollectedItemIds(this.collectedItemIds);
     this.potentialCompositeItemIds = this.getUniqueCompositeIdsFromComponentIds(collectedComponentItemIds);
     this.potentialCompositeItems = this.getCompositeItemsFromIds(this.potentialCompositeItemIds);
   }
@@ -115,6 +117,9 @@ export class DashboardComponent implements OnInit {
         for (let j = i + 1; j < max; j++) {
           let firstId = itemIds[i];
           let secondId = itemIds[j];
+          if (firstId > 9 || secondId > 9){
+            continue;
+          }
           if (firstId > secondId){
             const tempId = secondId;
             secondId = firstId;
@@ -134,7 +139,7 @@ export class DashboardComponent implements OnInit {
     return this.allItems[itemId];
   }
 
-  getComponentItemIdsFromItemIds(collectedItems: number[]): number[] {
+  getComponentItemIdsFromCollectedItemIds(collectedItems: number[]): number[] {
     return collectedItems.filter(this.isComponentItemId);
   }
 
@@ -151,16 +156,27 @@ export class DashboardComponent implements OnInit {
     if (this.collectedItems.length < 2) {
       return;
     }
-    const collectedComponentItemIds = this.getComponentItemIdsFromItemIds(
-      this.getItemIdsFromItems(this.collectedItems)
-    );
+    const collectedComponentItemIds = this.collectedItemIds.filter(this.isComponentItemId);
+
     this.updateCurrentPotentialCompositeItems();
     if (collectedComponentItemIds.length < 2) {
       return;
     }
 
-   // this.iterateCombinations(collectedComponentItemIds, []);
-   // this.updateItemCombinations();
+    this.iterateCombinations(collectedComponentItemIds, []);
+    this.makeCombinationsUnique();
+    this.updateItemCombinations();
+  }
+
+  makeCombinationsUnique() {
+    this.itemCombinationIds = [ ...this.itemCombinationIds];
+    for (const itemCombinationIds of this.itemCombinationIds){
+      const currentItemList = [];
+      for (const itemIds of itemCombinationIds){
+        currentItemList.push(this.getItemById(itemIds));
+      }
+      this.itemCombinations.push(currentItemList);
+    }
   }
 
   updateItemCombinations(): void{
@@ -174,35 +190,34 @@ export class DashboardComponent implements OnInit {
   }
 
   iterateCombinations(collectedComponentItemIds: number[], head: number[]): void {
-    console.log('start iterateCombos');
-    console.log('collectedComponentItemIds = ' + collectedComponentItemIds);
-    const uniqueCompositeIds = this.getUniqueCompositeIdsFromComponentIds(collectedComponentItemIds);
+    const componentIds = cloneArray(collectedComponentItemIds);
+    const uniqueCompositeIds = this.getUniqueCompositeIdsFromComponentIds(componentIds);
     for (const currentCompositeItemId of uniqueCompositeIds){
-      const remainingComponentItemIds = uniqueCompositeIds;
-      this.removeComponentsSpentByCompositeItemCreation(remainingComponentItemIds, currentCompositeItemId);
+      const remainingComponentItemIds = this.removeComponentsSpentByCompositeItemCreation(componentIds, currentCompositeItemId);
       const possibleItemCombinationIds: number[] = [];
+      head.push(currentCompositeItemId);
       possibleItemCombinationIds.push(currentCompositeItemId);
-      if (remainingComponentItemIds.length >= 2){
-        head.push(currentCompositeItemId);
-        this.iterateCombinations(remainingComponentItemIds, head);
-      }
-      else{
-        for (const rcii of remainingComponentItemIds) {
+      for (const rcii of remainingComponentItemIds) {
           const newComponentItemToBePushed = this.getItemById(rcii);
           possibleItemCombinationIds.push(newComponentItemToBePushed.id);
         }
-        this.itemCombinationIds.push(head);
-        this.itemCombinationIds.push(possibleItemCombinationIds);
-      }
+      const itemIdsToBePushed = [];
+      if (head.length > 0) { itemIdsToBePushed.push(head); }
+      for (const rcii of remainingComponentItemIds) {
+           itemIdsToBePushed.push(rcii);
+        }
+      this.itemCombinationIds.push(itemIdsToBePushed);
+
     }
-    console.log(this.itemCombinationIds);
   }
 
-  removeComponentsSpentByCompositeItemCreation(collectedComponentItemIds: number[], itemId: number){
+  removeComponentsSpentByCompositeItemCreation(collectedComponentItemIds: number[], itemId: number): number[]{
+    let transformedComponentItemIds = cloneArray(collectedComponentItemIds);
     const itemTensDecimalPlace = Math.floor(itemId / 10);
     const itemOnesDecimalPlace = itemId % 10;
-    collectedComponentItemIds.splice(itemTensDecimalPlace, 1);
-    collectedComponentItemIds.splice(itemOnesDecimalPlace, 1);
+    transformedComponentItemIds = transformedComponentItemIds.splice(itemTensDecimalPlace, 1);
+    transformedComponentItemIds = transformedComponentItemIds.splice(itemOnesDecimalPlace, 1);
+    return transformedComponentItemIds;
   }
 
 }

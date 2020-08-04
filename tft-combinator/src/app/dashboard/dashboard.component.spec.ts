@@ -215,6 +215,12 @@ describe('DashboardComponent', () => {
     expect(component.potentialCompositeItems.length).toEqual(36);
   });
 
+  it('should remove a two items from list based on single two digit number', () => {
+    let itemIds = [1, 2];
+    itemIds = component.removeComponentsSpentByCompositeItemCreation(itemIds, 12);
+    expect(itemIds.length).toEqual(0);
+  });
+
   it('should create', () => {
    expect(component).toBeTruthy();
   });
