@@ -125,7 +125,7 @@ describe('DashboardComponent', () => {
     }
     expect(component.potentialCompositeItems.length).toEqual(36);
   });
-
+/*
   it('should have 45 potentialCompositeItmes given that each component item is added twice', () => {
     for (const cpt of component.allComponentItems) {
       component.addComponentItem(cpt);
@@ -133,7 +133,7 @@ describe('DashboardComponent', () => {
     }
     expect(component.potentialCompositeItems.length).toEqual(45);
   });
-
+*/
   it('should have 0 unique possible item combinations given 1 component item', () => {
     component.addComponentItem(component.allComponentItems[0]);
     expect(component.potentialCompositeItems.length).toEqual(0);
@@ -215,23 +215,28 @@ describe('DashboardComponent', () => {
     expect(component.potentialCompositeItems.length).toEqual(36);
   });
 
-  it('should remove a two items from list based on single two digit number', () => {
+  it('should remove two items from list based on single two digit number', () => {
     let itemIds = [1, 2];
     itemIds = component.removeComponentsSpentByCompositeItemCreation(itemIds, 12);
     expect(itemIds.length).toEqual(0);
   });
 
-  it('should remove a two items from list of 3 numbers based on single two digit number', () => {
+  it('should remove two items from list of 3 numbers based on single two digit number', () => {
     let itemIds = [1, 2, 3];
     itemIds = component.removeComponentsSpentByCompositeItemCreation(itemIds, 12);
-    expect(itemIds).toEqual([1]);
+    expect(itemIds).toEqual([3]);
   });
+
+  it('should remove two items from list of 5 numbers based on single two digit number', () => {
+    let itemIds = [1, 2, 3, 4, 5];
+    itemIds = component.removeComponentsSpentByCompositeItemCreation(itemIds, 12);
+    expect(itemIds).toEqual([3, 4, 5]);
+  });
+
 
   it('should sort the array [1,2,3] in desc order [3,2,1]', () => {
     let itemIds: number[] = [1, 2, 3];
-    console.log('itemIds = ' + itemIds);
     itemIds = itemIds.sort((a, b) => b - a);
-    console.log('sorted ids = ' + itemIds);
     expect(itemIds).toEqual([3, 2, 1]);
   });
 

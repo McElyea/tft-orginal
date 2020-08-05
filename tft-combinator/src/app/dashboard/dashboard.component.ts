@@ -142,42 +142,27 @@ export class DashboardComponent implements OnInit {
     }
     this.updateCurrentPotentialCompositeItems();
     this.iterateCombinations(this.collectedItemIds.filter(isComponentItem), []);
-    this.makeCombinationsUnique();
-    this.updateItemCombinations();
+    // this.makeCombinationsUnique();
+    // this.updateItemCombinations();
   }
 
   makeCombinationsUnique() {
 
-    console.log('itemIds = ');
-
-    console.log(this.itemCombinationIds);
     const workingCombinations: number[][] = [];
     for (const itemComboIds of this.itemCombinationIds){
-      console.log('itemComboIds = ');
-      console.log(itemComboIds);
       const componentItems = itemComboIds.filter(isComponentItem);
       const numberOfComponents = componentItems.length || 0;
-      if (numberOfComponents === 1 && itemComboIds.length === 2 || isEven(itemComboIds.length)  && numberOfComponents > 1){
-        continue;
-      }
-      const itemIds = this.sortDesc(itemComboIds);
-      if (!workingCombinations.includes(itemIds)){
-        workingCombinations.push(itemIds);
+      if (numberOfComponents === 0
+        || numberOfComponents === 1 && itemComboIds.length > 2
+        || numberOfComponents < 2 ){
+        const itemIds = cloneArray(itemComboIds);
+        itemIds.sort((a, b) => b - a);
+        if (!workingCombinations.includes(itemIds)){
+          workingCombinations.push(itemIds);
+        }
       }
     }
     this.itemCombinationIds = workingCombinations;
-    console.log('workingCombinations = ' + workingCombinations);
-  }
-
-  sortDesc(itemIds: number[]) {
-
-    let sortedIds: number[] = cloneArray(itemIds);
-
-    console.log(sortedIds);
-    sortedIds = sortedIds.sort((a, b) => b - a);
-
-    console.log(sortedIds);
-    return sortedIds;
   }
 
   updateItemCombinations(): void{
@@ -202,13 +187,32 @@ export class DashboardComponent implements OnInit {
     const uniqueCompositeIds = this.getUniqueCompositeIdsFromItemIds(componentIds);
     for (const currentCompositeItemId of uniqueCompositeIds){
       const remainingComponentItemIds = this.removeComponentsSpentByCompositeItemCreation(componentIds, currentCompositeItemId);
-      head.push(currentCompositeItemId);
       const itemIdsToBePushed = [];
-      if (head.length > 0) { itemIdsToBePushed.push(head); }
+      const remainderComponents = [];
+      const componentItems = collectedComponentItemIds.filter(isComponentItem);
+      const numberOfComponents = componentItems.length || 0;
+      if (numberOfComponents === 0
+        || numberOfComponents === 1 && collectedComponentItemIds.length > 2
+        || numberOfComponents < 2 ){
+        const itemIds = cloneArray(collectedComponentItemIds);
+        itemIds.sort((a, b) => b - a);
+
+      }
+      itemIdsToBePushed.push(currentCompositeItemId);
       for (const rcii of remainingComponentItemIds) {
-           itemIdsToBePushed.push(rcii);
+        itemIdsToBePushed.push(rcii);
+        if (remainingComponentItemIds.length >= 2){
+          head.push(currentCompositeItemId);
+          remainderComponents.push(rcii);
         }
+      }
       this.itemCombinationIds.push(itemIdsToBePushed);
+      for (const itemIds of head){
+        itemIdsToBePushed.push(itemIds);
+      }
+      if (remainderComponents.length > 2){
+        this.iterateCombinations(remainderComponents, head);
+      }
 
     }
   }
@@ -217,9 +221,9 @@ export class DashboardComponent implements OnInit {
     const transformedComponentItemIds = cloneArray(collectedComponentItemIds);
     const itemTensDecimalPlace = Math.floor(itemId / 10);
     const itemOnesDecimalPlace = itemId % 10;
-    const itemInitemTensIndex = collectedComponentItemIds.find((id) => itemTensDecimalPlace === id);
+    const itemInitemTensIndex = transformedComponentItemIds.indexOf(itemTensDecimalPlace);
     transformedComponentItemIds.splice(itemInitemTensIndex, 1);
-    const itemInitemOnesIndex = collectedComponentItemIds.find((id) => itemOnesDecimalPlace === id);
+    const itemInitemOnesIndex = transformedComponentItemIds.indexOf(itemOnesDecimalPlace);
     transformedComponentItemIds.splice(itemInitemOnesIndex, 1);
     return transformedComponentItemIds;
   }
