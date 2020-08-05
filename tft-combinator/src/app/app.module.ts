@@ -5,7 +5,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { ItemsComponent } from './items/items.component';
-import { ItemsCollectedComponent } from './items-collected/items-collected.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -17,7 +16,6 @@ import {MatButtonModule} from '@angular/material/button';
   declarations: [
     AppComponent,
     ItemsComponent,
-    ItemsCollectedComponent,
     DashboardComponent
   ],
   imports: [

@@ -18,6 +18,6 @@ export class ItemService {
   }
 
   getItem(id: number): Observable<Item> {
-    return of(ITEMS.find(item => item.id === id));
+    return of(ITEMS.find((item: { id: number; }) => item.id === id));
   }
 }

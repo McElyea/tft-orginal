@@ -3,6 +3,7 @@ import { Item } from '../item';
 import { ItemService } from '../item.service';
 import { AnonymousSubject } from 'rxjs/internal/Subject';
 import { analyzeAndValidateNgModules } from '@angular/compiler';
+import { stringify } from '@angular/compiler/src/util';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,6 +16,7 @@ export class DashboardComponent implements OnInit {
   collectedItemIds: number[] = [];
   potentialCompositeItemIds: number[] = [];
   itemCombinationIds: number[][] = [];
+  combinations: {[key: string]: number[]} = {};
 
   // These are used by the HTML
   allComponentItems: Item[] = [];
@@ -135,87 +137,88 @@ export class DashboardComponent implements OnInit {
   }
 
   updateCombinations(): void {
-    this.itemCombinations = [];
-    this.itemCombinationIds = [];
+    this.initializeCombinations();
     if (this.collectedItems.length < 2) {
       return;
     }
     this.updateCurrentPotentialCompositeItems();
-    this.iterateCombinations(this.collectedItemIds.filter(isComponentItem), []);
-    // this.makeCombinationsUnique();
-    // this.updateItemCombinations();
+    this.iterateCombinations(this.collectedItemIds.filter(isComponentItem));
+    this.removePartialCombinations();
+    this.updateFinalItemCombinations();
   }
 
-  makeCombinationsUnique() {
-
-    const workingCombinations: number[][] = [];
-    for (const itemComboIds of this.itemCombinationIds){
-      const componentItems = itemComboIds.filter(isComponentItem);
-      const numberOfComponents = componentItems.length || 0;
-      if (numberOfComponents === 0
-        || numberOfComponents === 1 && itemComboIds.length > 2
-        || numberOfComponents < 2 ){
-        const itemIds = cloneArray(itemComboIds);
-        itemIds.sort((a, b) => b - a);
-        if (!workingCombinations.includes(itemIds)){
-          workingCombinations.push(itemIds);
-        }
-      }
-    }
-    this.itemCombinationIds = workingCombinations;
-  }
-
-  updateItemCombinations(): void{
+  initializeCombinations() {
     this.itemCombinations = [];
-    const combos: number[][] = cloneArray(this.itemCombinationIds);
-    const icIdsLength = combos.length;
-    if (icIdsLength === 0) { return ; }
-    for (let i = 0; i < icIdsLength; i++){
-      const itemCombo = combos[i];
-      const itemComboLength = itemCombo.length;
-      const items: Item[] = [];
-      for (let j = 0; j < itemComboLength; j++){
-        const itemId: number = itemCombo[j];
-        items.push(this.getItemById(itemId));
-      }
-      this.itemCombinations.push(items);
-    }
+    this.itemCombinationIds = [];
+    this.combinations = {};
   }
 
-  iterateCombinations(collectedComponentItemIds: number[], head: number[]): void {
-    const componentIds = cloneArray(collectedComponentItemIds);
-    const uniqueCompositeIds = this.getUniqueCompositeIdsFromItemIds(componentIds);
-    for (const currentCompositeItemId of uniqueCompositeIds){
-      const remainingComponentItemIds = this.removeComponentsSpentByCompositeItemCreation(componentIds, currentCompositeItemId);
-      const itemIdsToBePushed = [];
-      const remainderComponents = [];
-      const componentItems = collectedComponentItemIds.filter(isComponentItem);
-      const numberOfComponents = componentItems.length || 0;
-      if (numberOfComponents === 0
-        || numberOfComponents === 1 && collectedComponentItemIds.length > 2
-        || numberOfComponents < 2 ){
-        const itemIds = cloneArray(collectedComponentItemIds);
-        itemIds.sort((a, b) => b - a);
-
+  removePartialCombinations() {
+    const workingCombinations: number[][] = [];
+    const keys = Object.keys(this.combinations);
+    let greatestCompositeItemIdsLength = 0;
+    for (const key of keys){
+      const itemIds: number[] = this.combinations[key];
+      workingCombinations.push(itemIds);
+      const numberOfCompositeItemIds = itemIds.filter(isCompositeItem).length || 0;
+      if (numberOfCompositeItemIds > greatestCompositeItemIdsLength){
+        greatestCompositeItemIdsLength = numberOfCompositeItemIds;
       }
-      itemIdsToBePushed.push(currentCompositeItemId);
-      for (const rcii of remainingComponentItemIds) {
-        itemIdsToBePushed.push(rcii);
-        if (remainingComponentItemIds.length >= 2){
-          head.push(currentCompositeItemId);
-          remainderComponents.push(rcii);
+    }
+    const finalItemCombos: number[][] = [];
+    if (workingCombinations.length > 1){
+      for (const finalCombo of workingCombinations){
+        if (finalCombo.filter(isCompositeItem).length === greatestCompositeItemIdsLength){
+          finalItemCombos.push(finalCombo);
         }
       }
-      this.itemCombinationIds.push(itemIdsToBePushed);
-      for (const itemIds of head){
-        itemIdsToBePushed.push(itemIds);
-      }
-      if (remainderComponents.length > 2){
-        this.iterateCombinations(remainderComponents, head);
-      }
+    }
+    else{
+      finalItemCombos.push(workingCombinations[0]);
+    }
+    this.itemCombinationIds = finalItemCombos;
+  }
 
+  updateFinalItemCombinations(): void{
+    this.itemCombinations = [];
+    const combinationIds: number[][] = cloneArray(this.itemCombinationIds);
+    const comboIdsLength = combinationIds.length;
+    if (comboIdsLength === 0) { return ; }
+    const finalComboItems: Item[][] = [];
+    for (let i = 0; i < comboIdsLength; i++){
+      const itemIds = combinationIds[i];
+      const itemIdsLength = itemIds.length;
+      const currentCombination: Item[] = [];
+      for (let j = 0; j < itemIdsLength; j++){
+        const itemId: number = itemIds[j];
+        currentCombination.push(this.getItemById(itemId));
+      }
+      finalComboItems.push(currentCombination);
+    }
+    this.itemCombinations = finalComboItems;
+  }
+
+  iterateCombinations(itemIds: number[]): void{
+    if (itemIds.length <= 1) { return; }
+    const currentItemIds = cloneArray(itemIds);
+    const componentItemIds = currentItemIds.filter(isComponentItem);
+    const uniqueCompositeIds = this.getUniqueCompositeIdsFromItemIds(componentItemIds);
+    for (const currentCompositeItemId of uniqueCompositeIds){
+      const currentCombination: number[] = [];
+      currentCombination.push(currentCompositeItemId);
+      const remainingItemIds = this.removeComponentsSpentByCompositeItemCreation(currentItemIds, currentCompositeItemId);
+      for (const remainingItemId of remainingItemIds){
+        currentCombination.push(remainingItemId);
+      }
+      currentCombination.sort((a, b) => b - a);
+      const key = getKey(currentCombination);
+      this.combinations[key] = currentCombination;
+      if (remainingItemIds.length > 1){
+        this.iterateCombinations(currentCombination);
+      }
     }
   }
+
 
   removeComponentsSpentByCompositeItemCreation(collectedComponentItemIds: number[], itemId: number): number[]{
     const transformedComponentItemIds = cloneArray(collectedComponentItemIds);
@@ -238,8 +241,21 @@ function cloneArray(arr: any[]) {
   return returnArray;
 }
 
-function isComponentItem(element: number, index, array){
-  return element < 10;
+function isComponentItem(id: number, index, array){
+  return id <= 9;
+}
+
+function isCompositeItem(id: number, index, array){
+  return id > 9;
+}
+
+
+function getKey(ids: number[]){
+  let key = '';
+  for (const id of ids){
+    key = key + '[' + id + ']';
+  }
+  return key;
 }
 
 function isEven(n: number): boolean{
