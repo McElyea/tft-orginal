@@ -125,7 +125,7 @@ describe('DashboardComponent', () => {
     }
     expect(component.potentialCompositeItems.length).toEqual(36);
   });
-/*
+/* //This test is too powerful for the comboIterator and times out
   it('should have 45 potentialCompositeItmes given that each component item is added twice', () => {
     for (const cpt of component.allComponentItems) {
       component.addComponentItem(cpt);

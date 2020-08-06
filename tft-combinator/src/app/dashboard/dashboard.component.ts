@@ -56,11 +56,11 @@ export class DashboardComponent implements OnInit {
     const itemSecondDigit = item.id % 10;
     const newItem1 = this.getItemById(itemFirstDigit);
     const newItem2 = this.getItemById(itemSecondDigit);
-    this.removeCollectedItem(newItem1);
-    this.removeCollectedItem(newItem2);
+    this.removeCollectedItem(newItem1, false);
+    this.removeCollectedItem(newItem2, true);
   }
 
-  removeCollectedItem(item: Item): void {
+  removeCollectedItem(item: Item, update?: boolean): void {
     if (item.id > 9) {
       const itemFirstDigit = Math.floor(item.id / 10);
       const itemSecondDigit = item.id % 10;
@@ -73,7 +73,9 @@ export class DashboardComponent implements OnInit {
     this.collectedItems.splice(itemIndex, 1);
     const itemIdIndex = this.collectedItemIds.indexOf(item.id);
     this.collectedItemIds.splice(itemIdIndex, 1);
-    this.updateCraftableItems();
+    if (update){
+      this.updateCraftableItems();
+    }
   }
 
   pushItemToCollectedItems(item: Item){
@@ -256,8 +258,4 @@ function getKey(ids: number[]){
     key = key + '[' + id + ']';
   }
   return key;
-}
-
-function isEven(n: number): boolean{
-  return n % 2 === 0;
 }
